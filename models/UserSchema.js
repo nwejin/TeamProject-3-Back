@@ -1,0 +1,21 @@
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
+
+const UserSchema = new Schema({
+  user_id: {
+    require: true,
+    unique: true,
+    type: String,
+  },
+  user_password: {
+    require: true,
+    type: String,
+  },
+  word_bookmark: {
+    ref: "WordSchema",
+    type: [String],
+  },
+});
+
+// 기본적으로 첫번째인자 + s로 생성된다. -> 세번째 인자로 설정한 값이 컬렉션 아래에 스키마로 들어가게 된다.
+module.exports = mongoose.model("User", UserSchema);
