@@ -1,5 +1,5 @@
 const Cuser = require("../controllers/Cuser");
-const router = require("express").Router;
+const router = require("express").Router();
 
 router.get("/createUser", Cuser.userInsert);
 

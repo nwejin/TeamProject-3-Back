@@ -26,4 +26,4 @@ mongoose.connection.on("disconnected", () => {
     connect(); // 연결 재시도
 });
 
-module.exports = connect();
+module.exports = connect;
