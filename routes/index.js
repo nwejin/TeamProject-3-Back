@@ -1,4 +1,5 @@
 const Cuser = require("../controllers/Cuser");
+const Cnews = require("../controllers/Cnews");
 const router = require("express").Router();
 
 router.get("/", (req, res) => {
@@ -15,6 +16,8 @@ router.get('/api/data', (req, res) => {
 
 
 router.get("/createUser", Cuser.userInsert);
+router.get("/getnews", Cnews.getNewsList);
+router.get("/savenews", Cnews.saveNewsData);
 
 // 로그인 기능
 router.post("/login", Cuser.userLogin);
