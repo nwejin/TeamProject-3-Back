@@ -4,7 +4,7 @@ const express = require("express");
 const app = express();
 const mongoConnect = require("./models/index");
 mongoConnect();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 app.use(cors());
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
