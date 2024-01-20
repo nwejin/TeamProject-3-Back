@@ -3,11 +3,12 @@ const Cnews = require("../controllers/Cnews");
 const router = require("express").Router();
 
 router.get("/", (req, res) => {
-    res.json({ message: "Server is running" });
+    // 서버에서 클라이언트로 응답 보내기
+    res.json({ message: "Hello from the server!" });
 });
 
 router.get("/createUser", Cuser.userInsert);
-router.get("/getnews", Cnews.getNewsList);
+router.get("/news", Cnews.getNewsList);
 router.get("/savenews", Cnews.saveNewsData);
 
 // 로그인 기능
