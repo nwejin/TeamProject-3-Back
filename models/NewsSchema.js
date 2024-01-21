@@ -11,7 +11,7 @@ const NewsSchema = new Schema({
         type: String,
         unique: true,
     },
-    context: {
+    content: {
         require: true,
         type: String,
         unique: true,
@@ -41,6 +41,7 @@ const NewsSchema = new Schema({
     group: {
         type: Number,
         require: true,
+        default: 0,
     },
 });
 
