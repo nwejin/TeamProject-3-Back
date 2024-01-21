@@ -1,49 +1,31 @@
 const NewsSchema = require("../models/NewsSchema");
-const newsCrawling = require("../utils/newsCrawling");
+const getCoinNewsList = require("../utils/coinCrawling");
+const getNaverNewsList = require("../utils/naverCrawling");
 
 exports.getNewsList = async (req, res) => {
     try {
-        const existingNews = await NewsSchema.find().limit(20);
-        // 중복된 데이터가 없으면 새로운 데이터를 생성
+        const existingNews = await NewsSchema.find()
+            .sort({ date: -1 })
+            .limit(20);
         if (existingNews) {
             res.send(existingNews);
+        } else {
+            console.log("News DB is empty");
         }
     } catch (error) {
         console.error("Error in database operation:", error);
     }
 };
 
-exports.returnNewsList = async (req, res) => {
+exports.resetNewsList = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
-        const newsDataObject = await newsCrawling(
-            "https://kr.investing.com/news/latest-news"
+        const newsDatas = await getNaverNewsList(
+            "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=101"
         );
-        const newsDatas = Object.values(newsDataObject);
-
-        console.log("데이터 보내기 성공");
-
         // 클라이언트로 데이터 전송
         res.send(newsDatas);
-
-        // 데이터베이스 작업을 비동기적으로 실행
-        await Promise.all(
-            newsDatas.map(async (newsdata) => {
-                try {
-                    // 중복 체크
-                    const existingNews = await NewsSchema.findOne({
-                        title: newsdata.title,
-                    });
-
-                    // 중복된 데이터가 없으면 새로운 데이터를 생성
-                    if (!existingNews) {
-                        await NewsSchema.create(newsdata);
-                    }
-                } catch (error) {
-                    console.error("Error in database operation:", error);
-                }
-            })
-        );
+        console.log("데이터 보내기 성공");
     } catch (error) {
         console.error("Error in main function:", error);
         res.status(500).send("Internal Server Error");
@@ -53,15 +35,13 @@ exports.returnNewsList = async (req, res) => {
 exports.getStockNews = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
-        const newsDataObject = await newsCrawling(
-            "https://kr.investing.com/news/stock-market-news"
+        const newsDatas = await getNaverNewsList(
+            "https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=258"
         );
-        const newsDatas = Object.values(newsDataObject);
-
-        console.log("데이터 보내기 성공");
 
         // 클라이언트로 데이터 전송
         res.send(newsDatas);
+        console.log("데이터 보내기 성공");
 
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
@@ -70,6 +50,7 @@ exports.getStockNews = async (req, res) => {
                     // 중복 체크
                     const existingNews = await NewsSchema.findOne({
                         title: newsdata.title,
+                        content: newsdata.content,
                     });
 
                     // 중복된 데이터가 없으면 새로운 데이터를 생성
@@ -89,15 +70,13 @@ exports.getStockNews = async (req, res) => {
 exports.getCoinNews = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
-        const newsDataObject = await newsCrawling(
-            "https://kr.investing.com/news/cryptocurrency-news"
+        const newsDatas = await getCoinNewsList(
+            "https://www.digitaltoday.co.kr/news/articleList.html?page=1&total=12260&sc_section_code=S1N9&sc_sub_section_code=&sc_serial_code=&sc_second_serial_code=&sc_area=&sc_level=&sc_article_type=&sc_view_level=&sc_sdate=&sc_edate=&sc_serial_number=&sc_word=&box_idxno=&sc_multi_code=&sc_is_image=&sc_is_movie=&sc_user_name=&sc_order_by=E&view_type=sm"
         );
-        const newsDatas = Object.values(newsDataObject);
-
-        console.log("데이터 보내기 성공");
 
         // 클라이언트로 데이터 전송
         res.send(newsDatas);
+        console.log("데이터 보내기 성공");
 
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
@@ -106,6 +85,7 @@ exports.getCoinNews = async (req, res) => {
                     // 중복 체크
                     const existingNews = await NewsSchema.findOne({
                         title: newsdata.title,
+                        content: newsdata.content,
                     });
 
                     // 중복된 데이터가 없으면 새로운 데이터를 생성
@@ -122,18 +102,17 @@ exports.getCoinNews = async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 };
+
 exports.getEconomyNews = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
-        const newsDataObject = await newsCrawling(
-            "https://kr.investing.com/news/economy"
+        const newsDatas = await getNaverNewsList(
+            "https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=263"
         );
-        const newsDatas = Object.values(newsDataObject);
-
-        console.log("데이터 보내기 성공");
 
         // 클라이언트로 데이터 전송
         res.send(newsDatas);
+        console.log("데이터 보내기 성공");
 
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
@@ -142,6 +121,7 @@ exports.getEconomyNews = async (req, res) => {
                     // 중복 체크
                     const existingNews = await NewsSchema.findOne({
                         title: newsdata.title,
+                        content: newsdata.content,
                     });
 
                     // 중복된 데이터가 없으면 새로운 데이터를 생성
@@ -156,27 +136,6 @@ exports.getEconomyNews = async (req, res) => {
     } catch (error) {
         console.error("Error in main function:", error);
         res.status(500).send("Internal Server Error");
-    }
-};
-
-// 임시 함수
-exports.saveNewsData = async (req, res) => {
-    const newsDataObject = await newsCrawling(
-        "https://kr.investing.com/news/economy"
-    );
-    const newsDatas = Object.values(newsDataObject);
-    try {
-        for (const newsdata of newsDatas) {
-            try {
-                await NewsSchema.create(newsdata);
-            } catch (error) {
-                continue;
-            }
-        }
-        console.log("데이터 넣기 성공");
-        res.send("데이터 넣기 성공");
-    } catch (error) {
-        console.error(error);
     }
 };
 
