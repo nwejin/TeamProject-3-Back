@@ -1,3 +1,4 @@
+// 크롤링 후 DB 저장
 const NewsSchema = require("../models/NewsSchema");
 
 exports.saveNewsData = async (req, res) => {
