@@ -1,3 +1,4 @@
+
 const NewsSchema = require("../models/NewsSchema");
 const getCoinNewsList = require("../utils/coinCrawling");
 const getNaverNewsList = require("../utils/naverCrawling");
@@ -101,6 +102,11 @@ exports.getCoinNews = async (req, res) => {
         console.error("Error in main function:", error);
         res.status(500).send("Internal Server Error");
     }
+    console.log('데이터 넣기 성공');
+    res.send('데이터 넣기 성공');
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 exports.getEconomyNews = async (req, res) => {
