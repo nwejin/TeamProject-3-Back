@@ -22,6 +22,9 @@ app.use('/', indexRouter);
 const newsRouter = require('./routes/Rnews');
 app.use('/news', newsRouter);
 
+const communityRouter = require('./routes/Rcommunity');
+app.use('/community', communityRouter);
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
