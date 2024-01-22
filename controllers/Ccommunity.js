@@ -34,6 +34,7 @@ exports.community = (req, res) => {};
 // 1. DB 저장
 exports.communityWrite = async (req, res) => {
     try {
+        console.log('Received POST request to /community/write?');
         console.log(req.body);
         // const fileUrl = req.file.location;
         await CommunitySchema.create({
@@ -41,6 +42,7 @@ exports.communityWrite = async (req, res) => {
             content: req.body.content,
             subject: req.body.subject,
             // file: req.body.file,
+            date: new Date().toLocaleTimeString('ko-KR'),
         });
         res.send('게시글 작성 완료');
     } catch (err) {
@@ -49,7 +51,19 @@ exports.communityWrite = async (req, res) => {
 };
 
 // 2. 저장된 값 불러와서 프론트에 보내주기 (최신순으로)
-exports.communityRead = async (req, res) => {};
+exports.communityRead = async (req, res) => {
+    // DB에서 데이터 가져오기
+    try {
+        const communityPosts = await CommunitySchema.find().sort({
+            date: -1,
+        });
+
+        res.json(communityPosts);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('데이터 불러오기 실패');
+    }
+};
 
 // 댓글 작성
 exports.commentWrite = async (req, res) => {};
