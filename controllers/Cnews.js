@@ -1,4 +1,5 @@
 const NewsSchema = require('../models/NewsSchema');
+const WordsSchema = require("../models/WordSchema");
 const getCoinNewsList = require('../utils/coinCrawling');
 const { getNaverNewsList, getMainNewsList } = require('../utils/naverCrawling');
 
@@ -179,3 +180,17 @@ exports.getEconomyNews = async (req, res) => {
 // const coinNews = await NewsSchema.find({ group: 2 });    암호화폐
 // const economyNews = await NewsSchema.find({ group: 3 }); 경제
 ``;
+
+
+
+//////////
+exports.getWords = async (req, res) => {
+    try {
+    const words = await WordsSchema.find();
+    // console.log(words);
+    res.json(words);
+    } catch(error) {
+    console.error(error);
+    }
+    
+    }
