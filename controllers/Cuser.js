@@ -100,6 +100,7 @@ exports.userRegister = async (req, res) => {
         await UserSchema.create({
             user_id: req.body.user_id,
             user_password: hashedPw,
+            user_nickname: req.body.user_nickname,
             user_email: req.body.user_email,
         });
 
@@ -123,6 +124,27 @@ exports.userIdDuplicate = async (req, res) => {
             res.send({
                 success: false,
                 message: '중복되는 아이디가 있습니다.',
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ success: false, error: '회원가입 실패' });
+    }
+};
+
+exports.userNickDuplicate = async (req, res) => {
+    try {
+        console.log(req.body);
+        const { user_nickname } = req.body;
+        const user = await UserSchema.findOne({
+            user_nickname: user_nickname,
+        });
+        if (!user) {
+            res.send({ success: true, message: '사용가능한 닉네임입니다.' });
+        } else {
+            res.send({
+                success: false,
+                message: '중복되는 닉네임이 있습니다.',
             });
         }
     } catch (err) {
