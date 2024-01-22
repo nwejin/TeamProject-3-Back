@@ -1,8 +1,7 @@
-
-
 const NewsSchema = require("../models/NewsSchema");
 const getCoinNewsList = require("../utils/coinCrawling");
 const { getNaverNewsList, getMainNewsList } = require("../utils/naverCrawling");
+
 
 
 exports.getNewsList = async (req, res) => {
@@ -32,16 +31,16 @@ exports.resetNewsList = async (req, res) => {
             const [year, month, day] = datePart.split(".").map(Number); // 년, 월, 일 추출
             let [hour, minute] = timePart.split(":").map(Number); // 시간과 분 추출
 
-            // 오후인 경우, 시간을 12시간 추가
-            if (amPm.includes("오후") && hour !== 12) {
-                hour += 12;
-            }
-            return new Date(year, month - 1, day, hour, minute);
-        }
+      // 오후인 경우, 시간을 12시간 추가
+      if (amPm.includes('오후') && hour !== 12) {
+        hour += 12;
+      }
+      return new Date(year, month - 1, day, hour, minute);
+    }
 
-        newsDatas = newsDatas.sort(function (a, b) {
-            const dateA = parseDate(a.date);
-            const dateB = parseDate(b.date);
+    newsDatas = newsDatas.sort(function (a, b) {
+      const dateA = parseDate(a.date);
+      const dateB = parseDate(b.date);
 
             return dateB - dateA;
         });
@@ -91,6 +90,7 @@ exports.getStockNews = async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 
+
 };
 exports.getCoinNews = async (req, res) => {
   try {
@@ -98,7 +98,6 @@ exports.getCoinNews = async (req, res) => {
     const newsDatas = await getCoinNewsList(
       'https://www.digitaltoday.co.kr/news/articleList.html?page=1&total=12260&sc_section_code=S1N9&sc_sub_section_code=&sc_serial_code=&sc_second_serial_code=&sc_area=&sc_level=&sc_article_type=&sc_view_level=&sc_sdate=&sc_edate=&sc_serial_number=&sc_word=&box_idxno=&sc_multi_code=&sc_is_image=&sc_is_movie=&sc_user_name=&sc_order_by=E&view_type=sm'
     );
-
 
         // 클라이언트로 데이터 전송
         res.send(newsDatas);
