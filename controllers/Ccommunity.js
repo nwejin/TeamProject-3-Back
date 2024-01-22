@@ -4,6 +4,7 @@ const ReCommentSchema = require('../models/ReCommentSchema');
 
 exports.community = (req, res) => {};
 
+// 1. DB 저장
 exports.communityInsert = async (req, res) => {
   try {
     await CommunitySchema.create({
@@ -16,3 +17,5 @@ exports.communityInsert = async (req, res) => {
     console.log(err);
   }
 };
+
+// 2. 저장된 값 불러와서 프론트에 보내주기 (최신순으로)

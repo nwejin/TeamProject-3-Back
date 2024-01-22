@@ -18,6 +18,7 @@ exports.getNewsList = async (req, res) => {
 };
 
 exports.resetNewsList = async (req, res) => {
+
     try {
         // 웹 크롤링을 비동기적으로 실행
         var newsDatas = await getMainNewsList(
@@ -51,6 +52,7 @@ exports.resetNewsList = async (req, res) => {
         console.error('Error in main function:', error);
         res.status(500).send('Internal Server Error');
     }
+
 };
 
 exports.getStockNews = async (req, res) => {
@@ -59,6 +61,7 @@ exports.getStockNews = async (req, res) => {
         const newsDatas = await getNaverNewsList(
             'https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=258'
         );
+
 
         // 클라이언트로 데이터 전송
         res.send(newsDatas);
@@ -120,7 +123,15 @@ exports.getCoinNews = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
     console.log('데이터 넣기 성공');
+
 };
+//   catch (error) {
+//     console.error('Error in main function:', error);
+//     res.status(500).send('Internal Server Error');
+//   }
+//   console.log('데이터 넣기 성공');
+//   res.send('데이터 넣기 성공');
+// };
 //   } catch (error) {
 //     console.error(error);
 //   };
@@ -133,6 +144,7 @@ exports.getEconomyNews = async (req, res) => {
         const newsDatas = await getNaverNewsList(
             'https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=263'
         );
+
 
         // 클라이언트로 데이터 전송
         res.send(newsDatas);
@@ -160,6 +172,7 @@ exports.getEconomyNews = async (req, res) => {
         console.error('Error in main function:', error);
         res.status(500).send('Internal Server Error');
     }
+
 };
 
 // const stockNews = await NewsSchema.find({ group: 1 });   주식
