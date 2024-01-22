@@ -3,7 +3,7 @@ const Cindex = require('../controllers/Cindex');
 const router = require('express').Router();
 
 router.get('/', () => {
-  Cindex.getMain;
+    Cindex.getMain;
 });
 router.get('/createUser', Cuser.userInsert);
 
