@@ -11,6 +11,10 @@ const UserSchema = new Schema({
         require: true,
         type: String,
     },
+    user_nickname: {
+        require: true,
+        type: String,
+    },
     user_email: {
         require: true,
         type: String,
