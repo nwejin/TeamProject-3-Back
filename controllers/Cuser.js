@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const UserSchema = require("../models/UserSchema");
 // const WordSchema = require("../models/WordSchema");
-// const NewsSchema = require("../models/NewsSchema");
 
 const jwtSecret = 'aldiuasjdbcmbxmziuuedj' 
 
