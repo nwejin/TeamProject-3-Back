@@ -17,4 +17,7 @@ router.post("/login", Cuser.userLogin);
 // 회원가입 기능
 router.post("/register", Cuser.userRegister);
 
+// db에서 단어 가져오기
+router.get("/getWords", Cnews.getWords);
+
 module.exports = router;

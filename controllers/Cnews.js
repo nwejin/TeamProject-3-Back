@@ -1,6 +1,8 @@
 const NewsSchema = require("../models/NewsSchema");
 const newsCrawling = require("../utils/newsCrawling");
 
+const WordsSchema = require("../models/WordSchema");
+
 exports.getNewsList = async (req, res) => {
     // const newsDataObject = await newsCrawling(
     //     "https://kr.investing.com/news/economy"
@@ -38,3 +40,17 @@ exports.saveNewsData = async (req, res) => {
         console.error(error);
     }
 };
+
+
+
+//////////
+exports.getWords = async (req, res) => {
+    try {
+    const words = await WordsSchema.find();
+    // console.log(words);
+    res.json(words);
+    } catch(error) {
+    console.error(error);
+    }
+    
+    }
