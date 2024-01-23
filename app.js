@@ -22,6 +22,11 @@ app.use('/', indexRouter);
 const newsRouter = require('./routes/Rnews');
 app.use('/news', newsRouter);
 
+app.post('/kakao/code', (req, res) => {
+    console.log(req.body);
+    res.send({ login: 'complete' });
+});
+
 const communityRouter = require('./routes/Rcommunity');
 app.use('/community', communityRouter);
 
