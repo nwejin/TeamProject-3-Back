@@ -45,7 +45,7 @@ exports.resetNewsList = async (req, res) => {
 
             return dateB - dateA;
         });
-        console.log(newsDatas);
+        // console.log(newsDatas);
         // 클라이언트로 데이터 전송
         res.send(newsDatas);
         console.log('데이터 보내기 성공');
@@ -183,7 +183,7 @@ exports.getEconomyNews = async (req, res) => {
 
 
 
-//////////
+// 단어 전송
 exports.getWords = async (req, res) => {
     try {
     const words = await WordsSchema.find();
