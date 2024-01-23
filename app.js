@@ -27,6 +27,9 @@ app.post('/kakao/code', (req, res) => {
     res.send({ login: 'complete' });
 });
 
+const communityRouter = require('./routes/Rcommunity');
+app.use('/community', communityRouter);
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

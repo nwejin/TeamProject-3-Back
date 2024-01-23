@@ -3,7 +3,7 @@ const Cindex = require('../controllers/Cindex');
 const router = require('express').Router();
 
 router.get('/', () => {
-  Cindex.getMain;
+    Cindex.getMain;
 });
 router.get('/createUser', Cuser.userInsert);
 
@@ -15,6 +15,9 @@ router.post('/register', Cuser.userRegister);
 
 // 아이디 중복체크
 router.post('/idValidate', Cuser.userIdDuplicate);
+
+// 닉네임 중복체크
+router.post('/nicknameValidate', Cuser.userNickDuplicate);
 
 // 아이디 찾기
 router.post('/findId', Cuser.userFindId);
