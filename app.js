@@ -7,10 +7,10 @@ const mongoConnect = require('./models/Mindex');
 mongoConnect();
 const PORT = process.env.PORT || 8000;
 app.use(
-  cors({
-    origin: 'http://localhost:3000', // 클라이언트의 도메인
-    credentials: true,
-  })
+    cors({
+        origin: 'http://localhost:3000', // 클라이언트의 도메인
+        credentials: true,
+    })
 );
 const bodyParser = require('body-parser');
 app.use(cookieParser());
@@ -22,6 +22,11 @@ app.use('/', indexRouter);
 const newsRouter = require('./routes/Rnews');
 app.use('/news', newsRouter);
 
+app.post('/kakao/code', (req, res) => {
+    console.log(req.body);
+    res.send({ login: 'complete' });
+});
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
