@@ -6,7 +6,7 @@ const UserSchema = require('../models/UserSchema');
 const jwtSecret = 'aldiuasjdbcmbxmziuuedj';
 
 const cookieConfig = {
-    httpOnly: true,
+    // httpOnly: true,
     maxAge: 30 * 60 * 1000,
 };
 
