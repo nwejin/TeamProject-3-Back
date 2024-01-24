@@ -27,7 +27,10 @@ const storage = multerS3({
         const filename = `${uuid()}-${file.originalname}`;
         cb(null, filename);
     },
+    limits: { fileSize: 5 * 1024 * 1024 },
 });
+
+// exports.upload.single('file');
 
 const upload = multer({ storage: storage });
 
@@ -37,26 +40,24 @@ exports.community = (req, res) => {};
 exports.communityWrite = async (req, res) => {
     try {
         console.log('Received POST request to /community/write?');
-        console.log(req.body);
-        // const fileUrl = req.file.location;
+        console.log('req.body>', req.body);
+
         await CommunitySchema.create({
             title: req.body.title,
             content: req.body.content,
             subject: req.body.subject,
-            // 현재 파일은 빈 객체
-            // image: fileUrl,
+            // 파일
+            // image: imageUrl,
             // 한국 시간 (등록 시간)
-            date: new Date().toLocaleDateString('ko-KR', {
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-            }),
+            date: new Date().toISOString(),
         });
         res.send('게시글 작성 완료');
     } catch (err) {
         console.log(err);
     }
 };
+
+// 좋아요 데이터
 
 // 2. 저장된 값 불러와서 프론트에 보내주기 (최신순으로)
 exports.communityRead = async (req, res) => {
