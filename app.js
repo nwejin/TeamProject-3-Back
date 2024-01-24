@@ -30,6 +30,9 @@ app.post('/kakao/code', (req, res) => {
 const communityRouter = require('./routes/Rcommunity');
 app.use('/community', communityRouter);
 
+const virtualRouter = require('./routes/Rvirtual');
+app.use('/virtual', virtualRouter);
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
