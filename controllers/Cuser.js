@@ -6,7 +6,7 @@ const UserSchema = require('../models/UserSchema');
 const jwtSecret = 'aldiuasjdbcmbxmziuuedj';
 
 const cookieConfig = {
-    httpOnly: true,
+    // httpOnly: true,
     maxAge: 30 * 60 * 1000,
 };
 
@@ -31,19 +31,19 @@ const tokenCheck = async (req) => {
     }
 };
 
-exports.userInsert = async (req, res) => {
-    await UserSchema.create({
-        user_id: 'gqeew',
-        user_password: '4903',
-        user_email: 'hi@gmail.com',
-    })
-        .then((result) => {
-            console.log('data insert success');
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-};
+// exports.userInsert = async (req, res) => {
+//     await UserSchema.create({
+//         user_id: 'gqeew',
+//         user_password: '4903',
+//         user_email: 'hi@gmail.com',
+//     })
+//         .then((result) => {
+//             console.log('data insert success');
+//         })
+//         .catch((err) => {
+//             console.log(err);
+//         });
+// };
 
 exports.userLogin = async (req, res) => {
     try {

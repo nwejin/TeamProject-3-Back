@@ -3,9 +3,9 @@ const WordsSchema = require("../models/WordSchema");
 const getCoinNewsList = require('../utils/coinCrawling');
 const { getNaverNewsList, getMainNewsList } = require('../utils/naverCrawling');
 
-exports.getNewsList = async (req, res) => {
+exports.sendEconomyNews = async (req, res) => {
     try {
-        const existingNews = await NewsSchema.find()
+        const existingNews = await NewsSchema.find({group: 3})
             .sort({ date: -1 })
             .limit(20);
         if (existingNews) {
@@ -18,6 +18,39 @@ exports.getNewsList = async (req, res) => {
     }
 };
 
+exports.sendStockNews = async (req, res) => {
+    try {
+        const existingNews = await NewsSchema.find({group: 1})
+            .sort({ date: -1 })
+            .limit(20);
+        if (existingNews) {
+            res.send(existingNews);
+        } else {
+            console.log('News DB is empty');
+        }
+    } catch (error) {
+        console.error('Error in database operation:', error);
+    }
+};
+
+exports.sendCoinNews = async (req, res) => {
+    try {
+        const existingNews = await NewsSchema.find({group: 2})
+            .sort({ date: -1 })
+            .limit(20);
+        if (existingNews) {
+            res.send(existingNews);
+        } else {
+            console.log('News DB is empty');
+        }
+    } catch (error) {
+        console.error('Error in database operation:', error);
+    }
+};
+
+
+
+//------------------------------------------------------------------
 exports.resetNewsList = async (req, res) => {
 
     try {
@@ -65,10 +98,10 @@ exports.getStockNews = async (req, res) => {
 
 
         // 클라이언트로 데이터 전송
-        res.send(newsDatas);
+        // res.send(newsDatas);
         console.log('데이터 보내기 성공');
 
-        // 데이터베이스 작업을 비동기적으로 실행
+        //데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
             newsDatas.map(async (newsdata) => {
                 try {
@@ -99,8 +132,9 @@ exports.getCoinNews = async (req, res) => {
         );
 
         // 클라이언트로 데이터 전송
-        res.send(newsDatas);
-        console.log('데이터 보내기 성공');
+        // res.send(newsDatas);
+        // console.log('데이터 보내기 성공');
+
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
             newsDatas.map(async (newsdata) => {
@@ -148,8 +182,8 @@ exports.getEconomyNews = async (req, res) => {
 
 
         // 클라이언트로 데이터 전송
-        res.send(newsDatas);
-        console.log('데이터 보내기 성공');
+        // res.send(newsDatas);
+        // console.log('데이터 보내기 성공');
 
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(

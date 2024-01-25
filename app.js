@@ -29,6 +29,9 @@ app.use('/news', newsRouter);
 const communityRouter = require('./routes/Rcommunity');
 app.use('/community', communityRouter);
 
+const virtualRouter = require('./routes/Rvirtual');
+app.use('/virtual', virtualRouter);
+
 // 카카오 로그인
 // 나중에 정리할게요 >..<
 const client_id = 'da5d3b32f284512d0975b638e8a033ea';
@@ -107,6 +110,7 @@ app.get('/logout', async function (req, res) {
         console.log(error);
     }
 });
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

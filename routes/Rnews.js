@@ -1,11 +1,16 @@
 const Cnews = require("../controllers/Cnews");
 const router = require("express").Router();
 
-router.get("/", Cnews.getNewsList);
+router.get("/", Cnews.sendEconomyNews);
+
+router.get("/stock", Cnews.sendStockNews);
+router.get("/coin", Cnews.sendCoinNews);
+
+
 router.get("/reset", Cnews.resetNewsList);
-router.get("/stock", Cnews.getStockNews);
-router.get("/coin", Cnews.getCoinNews);
-router.get("/economy", Cnews.getEconomyNews);
+router.get("/getstock", Cnews.getStockNews);
+router.get("/getcoin", Cnews.getCoinNews);
+router.get("/geteconomy", Cnews.getEconomyNews);
 
 router.get("/getWords", Cnews.getWords);
 
