@@ -5,7 +5,7 @@ const router = require('express').Router();
 router.get('/', () => {
     Cindex.getMain;
 });
-router.get('/createUser', Cuser.userInsert);
+// router.get('/createUser', Cuser.userInsert);
 
 // 로그인 기능
 router.post('/login', Cuser.userLogin);
