@@ -71,7 +71,7 @@ exports.communityWrite = async (req, res) => {
 
 // 좋아요 데이터
 
-// 2. 저장된 값 불러와서 프론트에 보내주기 (최신순으로)
+// 2. 저장된 값 불러와서 메인 커뮤니티 화면에  보내주기 (최신순으로)
 exports.communityRead = async (req, res) => {
     // DB에서 데이터 가져오기
     try {
