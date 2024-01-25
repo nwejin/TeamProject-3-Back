@@ -4,7 +4,7 @@ const cheerio = require("cheerio");
 const iconv = require("iconv-lite");
 const axios = require("axios");
 
-// 매개변수 -> 크롤리하고자 하는 웹 페이지의 URL
+// 매개변수 -> 크롤링하고자 하는 웹 페이지의 URL
 const getOriginNews = async (originUrl) => {
     try {
         // Axios 사용하여 웹 페이지의 HTML을 가져옴
@@ -105,7 +105,7 @@ const getNaverNewsList = async (newsFieldUrl) => {
                 continue;
             }
         }
-        console.log("listResult", listResult);
+        // console.log("listResult", listResult);
         console.log(listResult.length);
         return listResult;
     } catch (error) {
