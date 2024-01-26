@@ -32,6 +32,9 @@ app.use('/community', communityRouter);
 const virtualRouter = require('./routes/Rvirtual');
 app.use('/virtual', virtualRouter);
 
+const mypageRouter = require('./routes/Rmypage');
+app.use('/mypage', mypageRouter);
+
 // 카카오 로그인
 // 나중에 정리할게요 >..<
 async function call(method, uri, param, header) {

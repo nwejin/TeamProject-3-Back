@@ -1,5 +1,6 @@
 // const Cindex = require('../controllers/Cindex');
 const Cuser = require('../controllers/Cuser');
+const Cmy = require('../controllers/Cmypage');
 const { default: tokenCheck } = require('../utils/tokenCheck');
 const router = require('express').Router();
 
