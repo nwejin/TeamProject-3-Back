@@ -11,8 +11,7 @@ require('dotenv').config();
 
 router.get('/', Ccommunity.community);
 
-require('dotenv').config();
-
+// 이미지 저장 관련
 const s3 = new S3Client({
     region: process.env.AWS_REGION,
     credentials: {
