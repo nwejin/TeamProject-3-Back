@@ -4,9 +4,6 @@ const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
 const mongoConnect = require('./models/Mindex');
-const axios = require('axios');
-const qs = require('querystring');
-require('dotenv').config;
 
 mongoConnect();
 const PORT = process.env.PORT || 8000;
@@ -143,6 +140,10 @@ app.get('/kakao/exit', async function (req, res) {
         res.send('로그아웃 실패');
     }
 });
+
+const kakaoRouter = require('./routes/Rkakao');
+app.use('/kakao', kakaoRouter);
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

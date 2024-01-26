@@ -27,6 +27,14 @@ const UserSchema = new Schema({
         ref: 'NewsSchema',
         type: [String],
     },
+    isKakao: {
+        require: true,
+        type: Number,
+        enum: [0, 1],
+    },
+    user_profile: {
+        type: String,
+    },
 });
 
 // 기본적으로 첫번째인자 + s(소문자)로 생성된다. -> 세번째 인자로 설정한 값이 DB 컬렉션 아래에 스키마명으로 들어가게 된다.
