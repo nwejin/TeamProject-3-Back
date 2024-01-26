@@ -1,4 +1,5 @@
 const VirtualSchema = require('../models/VirtualSchema');
+const StockWordSchema = require('../models/StockWordSchema');
 
 // 수익, 이긴 횟수, 진 횟수를 모두 저장합니다.
 exports.post_profit = async (req, res) => {
@@ -49,4 +50,19 @@ exports.post_profit = async (req, res) => {
     }
 
     res.send({});
+};
+
+// 클릭한 용어의 설명을 출력합니다.
+exports.get_vocabulary = async (req, res) => {
+    try {
+        const { eng_word } = req.query;
+        console.log(req.query);
+        const word = await StockWordSchema.findOne({
+            eng_word: eng_word,
+        });
+        res.send({ data: word });
+        // res.send('hi');
+    } catch (error) {
+        console.log(error);
+    }
 };
