@@ -4,18 +4,19 @@ const StockWordSchema = require('../models/StockWordSchema');
 // 수익, 이긴 횟수, 진 횟수를 모두 저장합니다.
 exports.post_profit = async (req, res) => {
     const { profit } = req.body;
-    const { saveId, jwtCookie } = req.cookies; // 비로그인 시 savedId만 전달 -> 로그인 시 savedId + jwtCookie 전달
+    const { jwtCookie } = req.cookies; // 비로그인 시 savedId만 전달 -> 로그인 시 savedId + jwtCookie 전달
+    const userid = await tokenCheck(req); //saveId 대신 userid로 저장
     console.log('req.body > ', profit);
 
     try {
         if (jwtCookie) {
             // 로그인 시
-            let searchData = await VirtualSchema.findOne({ userid: saveId }); // userid로 DB 검색
+            let searchData = await VirtualSchema.findOne({ userid: userid }); // userid로 DB 검색
 
             if (!searchData) {
                 // userid가 없으면 정보 저장
                 const newData = new VirtualSchema({
-                    userid: saveId,
+                    userid: userid,
                     profit: profit,
                     win: 0,
                     loss: 0,
