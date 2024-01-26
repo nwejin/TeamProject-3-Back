@@ -95,8 +95,8 @@ exports.getStockNews = async (req, res) => {
         );
 
         // 클라이언트로 데이터 전송
-        res.send(newsDatas);
-        console.log('데이터 보내기 성공');
+        // res.send('newsDatas');
+        // console.log('데이터 보내기 성공');
 
         //데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
@@ -131,8 +131,8 @@ exports.getCoinNews = async (req, res) => {
         );
 
         // 클라이언트로 데이터 전송
-        res.send(newsDatas);
-        console.log('데이터 보내기 성공');
+        // res.send(newsDatas);
+        // console.log('데이터 보내기 성공');
 
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
@@ -179,8 +179,8 @@ exports.getEconomyNews = async (req, res) => {
         );
 
         // 클라이언트로 데이터 전송
-        res.send(newsDatas);
-        console.log('데이터 보내기 성공');
+        // res.send(newsDatas);
+        // console.log('데이터 보내기 성공');
 
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
