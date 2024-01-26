@@ -1,61 +1,52 @@
-const VirtualSchema = require("../models/VirtualSchema");
+const VirtualSchema = require('../models/VirtualSchema');
 
-// profit, win, loss 모두 저장
+// 수익, 이긴 횟수, 진 횟수를 모두 저장합니다.
 exports.post_profit = async (req, res) => {
-  const { profit } = req.body;
-  console.log("req.body > ", profit);
+    const { profit } = req.body;
+    const { saveId, jwtCookie } = req.cookies; // 비로그인 시 savedId만 전달 -> 로그인 시 savedId + jwtCookie 전달
+    console.log('req.body > ', profit);
 
-  try {
-    const data = await VirtualSchema.findOne({});
+    try {
+        if (jwtCookie) {
+            // 로그인 시
+            let searchData = await VirtualSchema.findOne({ userid: saveId }); // userid로 DB 검색
 
-    if (data) {
-      // profit 없을 시 생성, 있다면 추가
-      if (data.profit) {
-        data.profit += profit;
-      } else {
-        data.profit = profit;
-      }
+            if (!searchData) {
+                // userid가 없으면 정보 저장
+                const newData = new VirtualSchema({
+                    userid: saveId,
+                    profit: profit,
+                    win: 0,
+                    loss: 0,
+                });
+                searchData = await newData.save();
+                console.log('new data', searchData);
+            } else {
+                // userid가 있으면 수익 업데이트
+                searchData.profit += profit;
+            }
 
-      // highest profit 없을 시 생성, 있다면 저장된 값과 들어온 값을 비교 후 큰 것을 저장
-      if (data.highest_profit) {
-        data.highest_profit = Math.max(data.highest_profit, profit);
-      } else {
-        data.highest_profit = profit;
-      }
+            // 수익에 따른 이긴 횟수, 진 횟수 통계
+            if (profit > 0) {
+                searchData.win ? (searchData.win += 1) : (searchData.win = 1);
+                console.log('profit win');
+            }
+            if (profit < 0) {
+                searchData.loss
+                    ? (searchData.loss += 1)
+                    : (searchData.loss = 1);
+                console.log('profit loss');
+            }
 
-      await data.save();
-
-      // 이득이 많다면 win, 손해가 많다면 loss
-      if (profit > 0) {
-        if (!data.win) {
-          // win 필드가 없으면 초기화
-          data.win = 0;
+            // 모든 수정이 완료 후 저장 -> 병렬 저장 방지를 위해 마지막으로 save
+            await searchData.save();
+        } else {
+            // 비로그인 시
+            console.log('not jwt, 비로그인임');
         }
-        data.win += 1;
-      } else {
-        if (!data.loss || isNaN(data.loss)) {
-          // loss 필드가 없거나 NaN이면 초기화
-          data.loss = 0;
-        }
-        data.loss += 1;
-      }
-
-      await data.save(); // 각 필드를 별도로 처리 후 다시 저장
-
-      console.log("profit 업데이트 완료");
-    } else {
-      // 새로운 데이터 생성
-      const newProfit = new VirtualSchema({ profit });
-      if (profit >= 0) {
-        newProfit.win = 1;
-      } else {
-        newProfit.loss = 1;
-      }
-      await newProfit.save();
-
-      console.log("profit 속성이 존재하지 않아서 추가함");
+    } catch (error) {
+        console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
+
+    res.send({});
 };

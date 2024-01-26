@@ -2,8 +2,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const UserSchema = require('../models/UserSchema');
 // const WordSchema = require("../models/WordSchema");
+require('dotenv').config();
 
-const jwtSecret = 'aldiuasjdbcmbxmziuuedj';
+// const jwtSecret = 'aldiuasjdbcmbxmziuuedj'; -> process.env.JWTSECRET로 변경
 
 const cookieConfig = {
     // httpOnly: true,
@@ -19,7 +20,7 @@ const tokenCheck = async (req) => {
     if (!token) {
         return false;
     } else {
-        const result = jwt.verify(token, jwtSecret);
+        const result = jwt.verify(token, process.env.JWTSECRET);
         const checkID = await UserSchema.findOne({
             user_id: result.id,
         });
@@ -31,19 +32,19 @@ const tokenCheck = async (req) => {
     }
 };
 
-exports.userInsert = async (req, res) => {
-    await UserSchema.create({
-        user_id: 'gqeew',
-        user_password: '4903',
-        user_email: 'hi@gmail.com',
-    })
-        .then((result) => {
-            console.log('data insert success');
-        })
-        .catch((err) => {
-            console.log(err);
-        });
-};
+// exports.userInsert = async (req, res) => {
+//     await UserSchema.create({
+//         user_id: 'gqeew',
+//         user_password: '4903',
+//         user_email: 'hi@gmail.com',
+//     })
+//         .then((result) => {
+//             console.log('data insert success');
+//         })
+//         .catch((err) => {
+//             console.log(err);
+//         });
+// };
 
 exports.userLogin = async (req, res) => {
     try {
@@ -81,7 +82,7 @@ exports.userLogin = async (req, res) => {
                     cookieId: req.cookies.saveId,
                 });
             } else {
-                const token = jwt.sign({ id: user_id }, jwtSecret);
+                const token = jwt.sign({ id: user_id }, process.env.JWTSECRET);
                 res.cookie('jwtCookie', token, cookieConfig);
                 res.json({ success: true, cookieId: req.cookies.saveId });
             }
