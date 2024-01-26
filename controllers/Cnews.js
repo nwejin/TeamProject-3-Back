@@ -85,6 +85,8 @@ exports.resetNewsList = async (req, res) => {
     }
 };
 
+// ---------------------------------------------------------------
+
 exports.getStockNews = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
@@ -93,7 +95,7 @@ exports.getStockNews = async (req, res) => {
         );
 
         // 클라이언트로 데이터 전송
-        // res.send(newsDatas);
+        res.send(newsDatas);
         console.log('데이터 보내기 성공');
 
         //데이터베이스 작업을 비동기적으로 실행
@@ -120,6 +122,7 @@ exports.getStockNews = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
 exports.getCoinNews = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
@@ -128,8 +131,8 @@ exports.getCoinNews = async (req, res) => {
         );
 
         // 클라이언트로 데이터 전송
-        // res.send(newsDatas);
-        // console.log('데이터 보내기 성공');
+        res.send(newsDatas);
+        console.log('데이터 보내기 성공');
 
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
@@ -154,7 +157,6 @@ exports.getCoinNews = async (req, res) => {
         console.error('Error in main function:', error);
         res.status(500).send('Internal Server Error');
     }
-    console.log('데이터 넣기 성공');
 };
 //   catch (error) {
 //     console.error('Error in main function:', error);
@@ -177,8 +179,8 @@ exports.getEconomyNews = async (req, res) => {
         );
 
         // 클라이언트로 데이터 전송
-        // res.send(newsDatas);
-        // console.log('데이터 보내기 성공');
+        res.send(newsDatas);
+        console.log('데이터 보내기 성공');
 
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(

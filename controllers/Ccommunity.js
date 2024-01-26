@@ -2,6 +2,8 @@ const CommunitySchema = require('../models/CommunitySchema');
 const CommentSchema = require('../models/CommentSchema');
 const ReCommentSchema = require('../models/ReCommentSchema');
 
+const jwt = require('jsonwebtoken');
+
 // const { S3Client } = require('@aws-sdk/client-s3');
 // // aws-s3관련 (이미지)
 // const AWS = require('aws-sdk');
@@ -45,10 +47,10 @@ exports.community = (req, res) => {};
 exports.communityWrite = async (req, res) => {
     try {
         console.log('Received POST request to /community/write');
-        console.log('req.body>', req.body);
+        // console.log('req.body>', req.body);
 
-        console.log('req.body.file >', req.body.file);
-        console.log('req.file >', req.file);
+        // console.log('req.body.file >', req.body.file);
+        // console.log('req.file >', req.file);
 
         const imageUrl = req.file ? req.file.location : null;
         // console.log('Uploaded Image URL:', imageUrl);
@@ -62,7 +64,12 @@ exports.communityWrite = async (req, res) => {
             // 한국 시간 (등록 시간)
             date: new Date().toISOString(),
         });
+
         res.send('게시글 작성 완료');
+
+        const userDetail = jwt.verify(req.cookies.jwtCookie);
+        console.log(userDetail);
+        console.log(req.cookies.jwtCookie);
     } catch (err) {
         console.log(err);
         res.status(500).send('게시글 작성 실패');
