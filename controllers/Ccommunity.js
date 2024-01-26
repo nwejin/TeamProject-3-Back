@@ -45,10 +45,10 @@ exports.community = (req, res) => {};
 exports.communityWrite = async (req, res) => {
     try {
         console.log('Received POST request to /community/write');
-        console.log('req.body>', req.body);
+        // console.log('req.body>', req.body);
 
-        console.log('req.body.file >', req.body.file);
-        console.log('req.file >', req.file);
+        // console.log('req.body.file >', req.body.file);
+        // console.log('req.file >', req.file);
 
         const imageUrl = req.file ? req.file.location : null;
         // console.log('Uploaded Image URL:', imageUrl);
@@ -63,6 +63,8 @@ exports.communityWrite = async (req, res) => {
             date: new Date().toISOString(),
         });
         res.send('게시글 작성 완료');
+        console.log(req.cookies.jwtCookie);
+        // console.log(req.session.user_id);
     } catch (err) {
         console.log(err);
         res.status(500).send('게시글 작성 실패');
