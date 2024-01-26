@@ -4,5 +4,6 @@ const { tokenCheck } = require('../utils/tokenCheck');
 exports.UserModify = async (req, res) => {
     try {
         console.log(await tokenCheck(req));
+        res.send(await tokenCheck(req));
     } catch (error) {}
 };
