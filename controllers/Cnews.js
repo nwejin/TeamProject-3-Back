@@ -1,11 +1,11 @@
 const NewsSchema = require('../models/NewsSchema');
-const WordsSchema = require("../models/WordSchema");
+const WordsSchema = require('../models/WordSchema');
 const getCoinNewsList = require('../utils/coinCrawling');
 const { getNaverNewsList, getMainNewsList } = require('../utils/naverCrawling');
 
 exports.sendEconomyNews = async (req, res) => {
     try {
-        const existingNews = await NewsSchema.find({group: 3})
+        const existingNews = await NewsSchema.find({ group: 3 })
             .sort({ date: -1 })
             .limit(20);
         if (existingNews) {
@@ -20,7 +20,7 @@ exports.sendEconomyNews = async (req, res) => {
 
 exports.sendStockNews = async (req, res) => {
     try {
-        const existingNews = await NewsSchema.find({group: 1})
+        const existingNews = await NewsSchema.find({ group: 1 })
             .sort({ date: -1 })
             .limit(20);
         if (existingNews) {
@@ -35,7 +35,7 @@ exports.sendStockNews = async (req, res) => {
 
 exports.sendCoinNews = async (req, res) => {
     try {
-        const existingNews = await NewsSchema.find({group: 2})
+        const existingNews = await NewsSchema.find({ group: 2 })
             .sort({ date: -1 })
             .limit(20);
         if (existingNews) {
@@ -48,12 +48,8 @@ exports.sendCoinNews = async (req, res) => {
     }
 };
 
-
-
-// ------------------------------------------------------------------
-
+//------------------------------------------------------------------
 exports.resetNewsList = async (req, res) => {
-
     try {
         // 웹 크롤링을 비동기적으로 실행
         var newsDatas = await getMainNewsList(
@@ -87,10 +83,7 @@ exports.resetNewsList = async (req, res) => {
         console.error('Error in main function:', error);
         res.status(500).send('Internal Server Error');
     }
-
 };
-
-
 
 // ---------------------------------------------------------------
 
@@ -98,11 +91,11 @@ exports.getStockNews = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
         const newsDatas = await getNaverNewsList(
-            'https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=258'
+            'https://news.naver.com/breakingnews/section/101/258'
         );
 
-        //클라이언트로 데이터 전송
-        res.send('newsDatas');
+        // 클라이언트로 데이터 전송
+        res.send(newsDatas);
         console.log('데이터 보내기 성공');
 
         //데이터베이스 작업을 비동기적으로 실행
@@ -123,6 +116,7 @@ exports.getStockNews = async (req, res) => {
                 }
             })
         );
+        res.status(201).send('saved');
     } catch (error) {
         console.error('Error in main function:', error);
         res.status(500).send('Internal Server Error');
@@ -158,6 +152,7 @@ exports.getCoinNews = async (req, res) => {
                 }
             })
         );
+        res.status(201).send('saved');
     } catch (error) {
         console.error('Error in main function:', error);
         res.status(500).send('Internal Server Error');
@@ -180,7 +175,7 @@ exports.getEconomyNews = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
         const newsDatas = await getNaverNewsList(
-            'https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=263'
+            'https://news.naver.com/breakingnews/section/101/263'
         );
 
         // 클라이언트로 데이터 전송
@@ -205,11 +200,11 @@ exports.getEconomyNews = async (req, res) => {
                 }
             })
         );
+        res.status(201).send('saved');
     } catch (error) {
         console.error('Error in main function:', error);
         res.status(500).send('Internal Server Error');
     }
-
 };
 
 // const stockNews = await NewsSchema.find({ group: 1 });   주식
@@ -217,16 +212,13 @@ exports.getEconomyNews = async (req, res) => {
 // const economyNews = await NewsSchema.find({ group: 3 }); 경제
 ``;
 
-
-
 // 단어 전송
 exports.getWords = async (req, res) => {
     try {
-    const words = await WordsSchema.find();
-    // console.log(words);
-    res.json(words);
-    } catch(error) {
-    console.error(error);
+        const words = await WordsSchema.find();
+        // console.log(words);
+        res.json(words);
+    } catch (error) {
+        console.error(error);
     }
-    
-    }
+};
