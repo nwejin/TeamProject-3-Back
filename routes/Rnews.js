@@ -13,6 +13,7 @@ router.get('/getcoin', Cnews.getCoinNews);
 router.get('/geteconomy', Cnews.getEconomyNews);
 
 router.get('/getWords', Cnews.getWords);
+router.get('/checkMyWord', Cnews.checkMyWord);
 router.post('/saveMyWord', Cnews.saveMyWord);
 
 module.exports = router;

@@ -233,15 +233,50 @@ exports.getWords = async (req, res) => {
 
 // ------------------------------------------------------------------
 
-// user가 modal에서 저장한 단어 userDb에 저장
+// 기존에 하트 누른 단어인지 검사
+exports.checkMyWord = async (req, res) => {
+    try {
+        const modalWord = req.query.modalWord;
+        // console.log('하트체크',modalWord);
+        const id = await tokenCheck(req);
 
-exports.saveMyWord =  (req, res) => {
-    console.log(req.body);
-    // const userid = await tokenCheck(req);
-    // console.log(userid);
-    // try {
-    //     console.log(req.body);
-    // } catch (error) {
-    //     console.error(error);
-    // }
+        const user = await UserSchema.findOne({user_id: id})
+        if(user) {
+            const saveCheck = user.word_bookmark.some(word => word._id === modalWord._id);
+            if(saveCheck) {
+                res.json({ saved: saveCheck });
+            }
+        }
+    } catch(error) {
+        console.error(error);
+    }
+    
+}
+
+
+// wordModal에서 하트 누른 단어 userDb에 저장
+exports.saveMyWord = async (req, res) => {
+    try {
+        // console.log(req.body);
+        const modalWord = req.body.modalWord;
+        // console.log(modalWord);
+        const id = await tokenCheck(req);
+        // console.log(id);
+        const user = await UserSchema.findOne({user_id : id})
+        if (user) {
+            const duplicateCheck = user.word_bookmark.some(word => word._id === modalWord._id);
+            if(!duplicateCheck) {
+                user.word_bookmark.push(modalWord);
+                await user.save();
+            } else {
+                user.word_bookmark.pop(modalWord);
+                await user.save();
+            }
+            res.status(200).json({success: true, message: '단어 저장 성공!'})
+        } else {
+            res.status(404).json({success: false, message: '사용자를 찾을 수 없음'})
+        }
+    } catch (error) {
+        console.error(error);
+    }
 }
