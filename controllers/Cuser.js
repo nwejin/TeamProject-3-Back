@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const UserSchema = require('../models/UserSchema');
+const StockWordSchema = require('../models/StockWordSchema');
+const { tokenCheck } = require('../utils/tokenCheck');
 // const WordSchema = require("../models/WordSchema");
 require('dotenv').config();
-
-// const jwtSecret = 'aldiuasjdbcmbxmziuuedj'; -> process.env.JWTSECRET로 변경
-
+const jwtSecret = process.env.JWTSECRET;
 const cookieConfig = {
     // httpOnly: true,
     maxAge: 30 * 60 * 1000,
@@ -15,28 +15,28 @@ const cookieConfig2 = {
     maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
-const tokenCheck = async (req) => {
-    const token = req.cookies.jwtCookie;
-    if (!token) {
-        return false;
-    } else {
-        const result = jwt.verify(token, process.env.JWTSECRET);
-        const checkID = await UserSchema.findOne({
-            user_id: result.id,
-        });
-        if (checkID) {
-            return result.id;
-        } else {
-            return false;
-        }
-    }
-};
+// const tokenCheck = async (req) => {
+//     const token = req.cookies.jwtCookie;
+//     if (!token) {
+//         return false;
+//     } else {
+//         const result = jwt.verify(token, jwtSecret);
+//         const checkID = await UserSchema.findOne({
+//             user_id: result.id,
+//         });
+//         if (checkID) {
+//             return result.id;
+//         } else {
+//             return false;
+//         }
+//     }
+// };
 
 // exports.userInsert = async (req, res) => {
-//     await UserSchema.create({
-//         user_id: 'gqeew',
-//         user_password: '4903',
-//         user_email: 'hi@gmail.com',
+//     await StockWordSchema.create({
+//         eng_word: 'gqeew',
+//         kor_word: '4903',
+//         explanation: 'hi@gmail.com',
 //     })
 //         .then((result) => {
 //             console.log('data insert success');
@@ -82,8 +82,8 @@ exports.userLogin = async (req, res) => {
                     cookieId: req.cookies.saveId,
                 });
             } else {
-                const token = jwt.sign({ id: user_id }, process.env.JWTSECRET);
                 res.cookie('isKakao', false, cookieConfig);
+                const token = jwt.sign({ id: user_id }, jwtSecret);
                 res.cookie('jwtCookie', token, cookieConfig);
                 res.json({ success: true, cookieId: req.cookies.saveId });
             }
@@ -143,7 +143,11 @@ exports.userNickDuplicate = async (req, res) => {
             user_nickname: user_nickname,
         });
         if (!user) {
-            res.send({ success: true, message: '사용가능한 닉네임입니다.' });
+            res.send({
+                success: true,
+                message: '사용가능한 닉네임입니다.',
+                // msg: await tokenCheck(req),
+            });
         } else {
             res.send({
                 success: false,
@@ -216,5 +220,13 @@ exports.userChangePw = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).json({ success: false, error: '비밀번호 찾기 실패' });
+    }
+};
+
+exports.getMypage = async (req, res) => {
+    try {
+        console.log(await tokenCheck(req));
+    } catch (error) {
+        console.log(error);
     }
 };

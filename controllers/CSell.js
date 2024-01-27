@@ -1,20 +1,23 @@
 const VirtualSchema = require('../models/VirtualSchema');
+const StockWordSchema = require('../models/StockWordSchema');
+const { tokenCheck } = require('../utils/tokenCheck');
 
 // 수익, 이긴 횟수, 진 횟수를 모두 저장합니다.
 exports.post_profit = async (req, res) => {
     const { profit } = req.body;
-    const { saveId, jwtCookie } = req.cookies; // 비로그인 시 savedId만 전달 -> 로그인 시 savedId + jwtCookie 전달
+    const { jwtCookie } = req.cookies; // 비로그인 시 savedId만 전달 -> 로그인 시 savedId + jwtCookie 전달
+    const userid = await tokenCheck(req); //saveId 대신 userid로 저장
     console.log('req.body > ', profit);
 
     try {
         if (jwtCookie) {
             // 로그인 시
-            let searchData = await VirtualSchema.findOne({ userid: saveId }); // userid로 DB 검색
+            let searchData = await VirtualSchema.findOne({ userid: userid }); // userid로 DB 검색
 
             if (!searchData) {
                 // userid가 없으면 정보 저장
                 const newData = new VirtualSchema({
-                    userid: saveId,
+                    userid: userid,
                     profit: profit,
                     win: 0,
                     loss: 0,
@@ -40,13 +43,28 @@ exports.post_profit = async (req, res) => {
 
             // 모든 수정이 완료 후 저장 -> 병렬 저장 방지를 위해 마지막으로 save
             await searchData.save();
+            res.send({ success: true });
         } else {
             // 비로그인 시
             console.log('not jwt, 비로그인임');
         }
     } catch (error) {
         console.log(error);
+        res.send({ success: false });
     }
+};
 
-    res.send({});
+// 클릭한 용어의 설명을 출력합니다.
+exports.get_vocabulary = async (req, res) => {
+    try {
+        const { eng_word } = req.query;
+        console.log(req.query);
+        const word = await StockWordSchema.findOne({
+            eng_word: eng_word,
+        });
+        res.send({ data: word });
+        // res.send('hi');
+    } catch (error) {
+        console.log(error);
+    }
 };
