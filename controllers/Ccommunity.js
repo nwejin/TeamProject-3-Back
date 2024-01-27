@@ -3,41 +3,7 @@ const CommentSchema = require('../models/CommentSchema');
 const ReCommentSchema = require('../models/ReCommentSchema');
 
 const jwt = require('jsonwebtoken');
-
-// const { S3Client } = require('@aws-sdk/client-s3');
-// // aws-s3관련 (이미지)
-// const AWS = require('aws-sdk');
-// const multer = require('multer');
-// const multerS3 = require('multer-s3');
-// const uuid = require('uuid4');
-
-// require('dotenv').config();
-
-// // s3 정보 저장
-// const s3 = new S3Client({
-//     region: process.env.AWS_REGION,
-//     credentials: {
-//         accessKeyId: process.env.AWS_ACCESSKEY,
-//         secretAccessKey: process.env.AWS_SECRECTACCESSKEY,
-//     },
-// });
-
-// // multer 설정
-// const storage = multerS3({
-//     s3: s3,
-//     acl: 'public-read-write',
-//     bucket: process.env.AWS_BUCKET,
-//     contentType: multerS3.AUTO_CONTENT_TYPE,
-//     key: (req, file, cb) => {
-//         const filename = `${uuid()}-${file.originalname}`;
-//         cb(null, filename);
-//     },
-//     // limits: { fileSize: 5 * 1024 * 1024 },
-// });
-
-// // exports.upload.single('file');
-
-// const upload = multer({ storage: storage });
+require('dotenv').config();
 
 exports.community = (req, res) => {};
 
@@ -47,6 +13,28 @@ exports.community = (req, res) => {};
 exports.communityWrite = async (req, res) => {
     try {
         console.log('Received POST request to /community/write');
+
+        const tokenCheck = async (req) => {
+            const token = req.cookies.jwtCookie;
+            if (!token) {
+                return false;
+            } else {
+                const result = jwt.verify(token, process.env.JWTSECRET);
+                const checkID = await UserSchema.findOne({
+                    user_id: result.id,
+                    user_nickname: result.nickname,
+                });
+                if (checkID) {
+                    return;
+                    {
+                        result.id, result.nickname;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        };
+        // console.log(console.log('tokenCheck', tokenCheck));
         // console.log('req.body>', req.body);
 
         // console.log('req.body.file >', req.body.file);
@@ -67,9 +55,7 @@ exports.communityWrite = async (req, res) => {
 
         res.send('게시글 작성 완료');
 
-        const userDetail = jwt.verify(req.cookies.jwtCookie);
-        console.log(userDetail);
-        console.log(req.cookies.jwtCookie);
+        // console.log(req.cookies.jwtCookie);
     } catch (err) {
         console.log(err);
         res.status(500).send('게시글 작성 실패');
