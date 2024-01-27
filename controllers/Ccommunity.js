@@ -5,6 +5,8 @@ const ReCommentSchema = require('../models/ReCommentSchema');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+const { tokenCheck } = require('../utils/tokenCheck');
+
 exports.community = (req, res) => {};
 
 // 1. DB 저장
@@ -14,27 +16,25 @@ exports.communityWrite = async (req, res) => {
     try {
         console.log('Received POST request to /community/write');
 
-        const tokenCheck = async (req) => {
-            const token = req.cookies.jwtCookie;
-            if (!token) {
-                return false;
-            } else {
-                const result = jwt.verify(token, process.env.JWTSECRET);
-                const checkID = await UserSchema.findOne({
-                    user_id: result.id,
-                    user_nickname: result.nickname,
-                });
-                if (checkID) {
-                    return;
-                    {
-                        result.id, result.nickname;
-                    }
-                } else {
-                    return false;
-                }
-            }
-        };
-        tokenCheck();
+        console.log(tokenCheck);
+        // const tokenCheck = async (req) => {
+        //     const token = req.cookies.jwtCookie;
+        //     if (!token) {
+        //         return false;
+        //     } else {
+        //         const result = jwt.verify(token, process.env.JWTSECRET);
+        //         const checkID = await UserSchema.findOne({
+        //             user_id: result.id,
+        //             user_nickname: result.nickname,
+        //         });
+        //         if (checkID) {
+        //             return result.id;
+        //         } else {
+        //             return false;
+        //         }
+        //     }
+        // };
+        // console.log(tokenCheck());
 
         // console.log(console.log('tokenCheck', tokenCheck));
         // console.log('req.body>', req.body);
