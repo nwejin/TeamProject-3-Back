@@ -8,7 +8,7 @@ const tokenCheck = async (req) => {
     if (!token) {
         return false;
     } else {
-        const result = jwt.verify(token, jwtSecret);
+        const result = await jwt.verify(token, jwtSecret);
         const checkID = await UserSchema.findOne({
             user_id: result.id,
         });
