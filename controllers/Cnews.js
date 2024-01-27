@@ -1,7 +1,9 @@
 const NewsSchema = require('../models/NewsSchema');
+const UserSchema = require('../models/UserSchema');
 const WordsSchema = require('../models/WordSchema');
 const getCoinNewsList = require('../utils/coinCrawling');
 const { getNaverNewsList, getMainNewsList } = require('../utils/naverCrawling');
+const { tokenCheck } = require('../utils/tokenCheck');
 
 exports.sendEconomyNews = async (req, res) => {
     try {
@@ -48,7 +50,8 @@ exports.sendCoinNews = async (req, res) => {
     }
 };
 
-//------------------------------------------------------------------
+// ------------------------------------------------------------------
+
 exports.resetNewsList = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
@@ -212,7 +215,10 @@ exports.getEconomyNews = async (req, res) => {
 // const economyNews = await NewsSchema.find({ group: 3 }); 경제
 ``;
 
-// 단어 전송
+
+// ------------------------------------------------------------------
+
+// Db에서 newsDetail로 단어 전송
 exports.getWords = async (req, res) => {
     try {
         const words = await WordsSchema.find();
@@ -222,3 +228,20 @@ exports.getWords = async (req, res) => {
         console.error(error);
     }
 };
+
+
+
+// ------------------------------------------------------------------
+
+// user가 modal에서 저장한 단어 userDb에 저장
+
+exports.saveMyWord =  (req, res) => {
+    console.log(req.body);
+    // const userid = await tokenCheck(req);
+    // console.log(userid);
+    // try {
+    //     console.log(req.body);
+    // } catch (error) {
+    //     console.error(error);
+    // }
+}
