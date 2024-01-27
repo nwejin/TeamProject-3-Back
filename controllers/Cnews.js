@@ -245,6 +245,8 @@ exports.checkMyWord = async (req, res) => {
             const saveCheck = user.word_bookmark.some(word => word._id === modalWord._id);
             if(saveCheck) {
                 res.json({ saved: saveCheck });
+            } else {
+                res.json({ saved: saveCheck });
             }
         }
     } catch(error) {
