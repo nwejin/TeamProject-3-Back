@@ -83,6 +83,7 @@ exports.userLogin = async (req, res) => {
                 });
             } else {
                 const token = jwt.sign({ id: user_id }, process.env.JWTSECRET);
+                res.cookie('isKakao', false, cookieConfig);
                 res.cookie('jwtCookie', token, cookieConfig);
                 res.json({ success: true, cookieId: req.cookies.saveId });
             }
