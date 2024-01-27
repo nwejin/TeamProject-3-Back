@@ -34,6 +34,8 @@ exports.communityWrite = async (req, res) => {
                 }
             }
         };
+        tokenCheck();
+
         // console.log(console.log('tokenCheck', tokenCheck));
         // console.log('req.body>', req.body);
 
