@@ -19,10 +19,10 @@ const UserSchema = new Schema({
         require: true,
         type: String,
     },
-    word_bookmark: {
+    word_bookmark: [{
         ref: 'WordSchema',
-        type: [String],
-    },
+        type: Object,
+    }],
     news_bookmark: {
         ref: 'NewsSchema',
         type: [String],
