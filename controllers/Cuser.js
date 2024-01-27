@@ -82,6 +82,7 @@ exports.userLogin = async (req, res) => {
                     cookieId: req.cookies.saveId,
                 });
             } else {
+                res.cookie('isKakao', false, cookieConfig);
                 const token = jwt.sign({ id: user_id }, jwtSecret);
                 res.cookie('jwtCookie', token, cookieConfig);
                 res.json({ success: true, cookieId: req.cookies.saveId });
