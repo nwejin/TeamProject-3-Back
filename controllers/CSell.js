@@ -1,5 +1,6 @@
 const VirtualSchema = require('../models/VirtualSchema');
 const StockWordSchema = require('../models/StockWordSchema');
+const { tokenCheck } = require('../utils/tokenCheck');
 
 // 수익, 이긴 횟수, 진 횟수를 모두 저장합니다.
 exports.post_profit = async (req, res) => {
@@ -42,15 +43,15 @@ exports.post_profit = async (req, res) => {
 
             // 모든 수정이 완료 후 저장 -> 병렬 저장 방지를 위해 마지막으로 save
             await searchData.save();
+            res.send({ success: true });
         } else {
             // 비로그인 시
             console.log('not jwt, 비로그인임');
         }
     } catch (error) {
         console.log(error);
+        res.send({ success: false });
     }
-
-    res.send({});
 };
 
 // 클릭한 용어의 설명을 출력합니다.
