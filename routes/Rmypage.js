@@ -1,6 +1,7 @@
 const Cmypage = require('../controllers/Cmypage');
 const router = require('express').Router();
 
-router.get('/UserModify', Cmypage.UserModify);
+router.post('/UserModify', Cmypage.UserModify);
+router.get('/hi', Cmypage.hi);
 
 module.exports = router;
