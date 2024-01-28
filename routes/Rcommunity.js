@@ -43,7 +43,10 @@ router.post('/write', upload.single('file'), Ccommunity.communityWrite);
 router.get('/read', Ccommunity.communityRead);
 
 // 댓글 데이터 추가
-router.post('/commentWrite', Ccommunity.communityCommentWrite);
+router.post('/commentWrite', Ccommunity.commentWrite);
+
+// // 댓글 호출
+router.get('/commentRead', Ccommunity.commentRead);
 
 // 글 삭제
 // router.post('/like', Ccommunity.communityLike);

@@ -8,7 +8,7 @@ require('dotenv').config();
 const { tokenCheck } = require('../utils/tokenCheck');
 const UserSchema = require('../models/UserSchema');
 
-exports.community = (req, res) => {};
+exports.community = async (req, res) => {};
 
 // 1. DB 저장
 
@@ -79,14 +79,27 @@ exports.communityRead = async (req, res) => {
 // exports.communityLike = asy;
 
 // 댓글 작성
-exports.commentWrite = async (req, res) => {};
-
-exports.communityCommentWrite = async (req, res) => {
+exports.commentWrite = async (req, res) => {
     try {
         console.log('Received POST request to /community/commentWrite');
+
+        const userId = await tokenCheck(req);
+        console.log(userId);
+
+        const user = await UserSchema.findOne({
+            user_id: userId,
+        });
+        if (!user) {
+            return res.status(404).send('사용자 확인 불가');
+        }
+
+        const nickName = user.user_nickname;
+        const user_id = user._id;
+
         await CommentSchema.create({
             communityId: req.body.postId,
-            userId: req.body.userId,
+            userId: user_id,
+            userNickName: nickName,
             content: req.body.content,
             date: new Date().toISOString(),
         });
@@ -94,6 +107,20 @@ exports.communityCommentWrite = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).send('댓글 작성 실패');
+    }
+};
+// 댓글 호출
+exports.commentRead = async (req, res) => {
+    // // DB에서 데이터 가져오기
+    const postId = req.query.postId;
+    try {
+        const comment = await CommentSchema.find({ communityId: postId }).sort({
+            date: -1,
+        });
+        res.json(comment);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('데이터 불러오기 실패');
     }
 };
 
