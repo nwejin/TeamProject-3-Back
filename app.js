@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
     res.send('server OK');
 });
-const indexRouter = require('./routes/RUser');
+const indexRouter = require('./routes/Ruser');
 app.use('/', indexRouter);
 
 const newsRouter = require('./routes/Rnews');

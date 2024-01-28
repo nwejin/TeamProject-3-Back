@@ -93,8 +93,8 @@ exports.login = async (req, res) => {
 
                 // 카카오 로그인 여부 확인
                 res.cookie('isKakao', true, cookieConfig);
+                // 현재 사용자 로그인 여부 확인 (카카오 아이디 jwt)
                 const token = jwt.sign({ id: userid }, process.env.JWTSECRET);
-                // 현재 사용자 로그인 여부 확인
                 res.cookie('jwtCookie', token, cookieConfig);
                 // 카카오 로그인 토큰 저장
                 res.cookie('kakaoToken', kakaoToken, cookieConfig);
