@@ -42,6 +42,10 @@ router.post('/write', upload.single('file'), Ccommunity.communityWrite);
 // 글 읽기
 router.get('/read', Ccommunity.communityRead);
 
+// 댓글 데이터 추가
+router.post('/commentWrite', Ccommunity.communityCommentWrite);
+
 // 글 삭제
+// router.post('/like', Ccommunity.communityLike);
 
 module.exports = router;
