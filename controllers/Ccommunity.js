@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const { tokenCheck } = require('../utils/tokenCheck');
+const UserSchema = require('../models/UserSchema');
 
 exports.community = (req, res) => {};
 
@@ -16,27 +17,18 @@ exports.communityWrite = async (req, res) => {
     try {
         console.log('Received POST request to /community/write');
 
-        console.log(tokenCheck);
-        // const tokenCheck = async (req) => {
-        //     const token = req.cookies.jwtCookie;
-        //     if (!token) {
-        //         return false;
-        //     } else {
-        //         const result = jwt.verify(token, process.env.JWTSECRET);
-        //         const checkID = await UserSchema.findOne({
-        //             user_id: result.id,
-        //             user_nickname: result.nickname,
-        //         });
-        //         if (checkID) {
-        //             return result.id;
-        //         } else {
-        //             return false;
-        //         }
-        //     }
-        // };
-        // console.log(tokenCheck());
+        const userId = await tokenCheck(req);
+        console.log(userId);
 
-        // console.log(console.log('tokenCheck', tokenCheck));
+        const user = await UserSchema.findOne({
+            user_id: userId,
+        });
+        if (user) {
+            return user.user_nickname;
+        }
+
+        const nickName = user.user_nickname;
+
         // console.log('req.body>', req.body);
 
         // console.log('req.body.file >', req.body.file);
@@ -45,6 +37,8 @@ exports.communityWrite = async (req, res) => {
         const imageUrl = req.file ? req.file.location : null;
         // console.log('Uploaded Image URL:', imageUrl);
         await CommunitySchema.create({
+            // userId: userId,
+            // userNickName: nickName,
             title: req.body.title,
             content: req.body.content,
             subject: req.body.subject,
