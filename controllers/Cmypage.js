@@ -53,32 +53,76 @@ exports.checkUserPassword = async (req, res) => {
     try {
         // console.log(req.body);
         const { user_password } = req.body.userData;
-        const hashedPw = bcrypt.hashSync(user_password, 10);
-        console.log(hashedPw);
-
         const currentUser = await UserSchema.findOne({
             user_id: req.body.currentUserId,
         });
-        const user = await UserSchema.findOne({
-            user_password: hashedPw,
-        });
-        if (!user) {
+        const result = bcrypt.compareSync(
+            user_password,
+            currentUser.user_password
+        );
+        if (!result) {
             res.send({
                 success: false,
                 message: '비밀번호 확인 실패',
             });
         } else {
-            if (currentUser === user) {
-                res.send({
-                    success: true,
-                    message: '비밀번호 확인 성공',
-                });
-            }
+            res.send({
+                success: true,
+                message: '비밀번호 확인 성공',
+            });
         }
     } catch (err) {
         console.log(err);
         res.status(500).json({ success: false, error: '비밀번호 확인 실패' });
     }
 };
-exports.modifyUserInfo = async (req, res) => {};
-exports.deleteUserinfo = async (req, res) => {};
+exports.modifyUserInfo = async (req, res) => {
+    const { user_nickname, user_changepw, user_email } = req.body.userData;
+    const currentUserId = req.body.currentUserId;
+    try {
+        console.log('현재 사용자 아이디', currentUserId);
+        console.log(req.body.userData);
+        const hashedPw = bcrypt.hashSync(user_changepw, 10);
+        const modifyUser = await UserSchema.updateOne(
+            {
+                user_id: currentUserId,
+            },
+            {
+                user_email: user_email,
+                user_password: hashedPw,
+                user_nickname: user_nickname,
+            }
+        );
+        console.log(modifyUser);
+        res.send({
+            success: true,
+            message: '회원정보 DB 수정 완료',
+        });
+    } catch (error) {
+        console.log('회원정보 DB 수정 에러');
+        res.send({
+            success: false,
+            message: '회원정보 DB 수정 에러',
+        });
+    }
+};
+exports.deleteUserinfo = async (req, res) => {
+    const currentUserId = req.body.currentUserId;
+    try {
+        console.log('현재 사용자 아이디', currentUserId);
+        const deleteUser = await UserSchema.deleteOne({
+            user_id: currentUserId,
+        });
+        console.log(deleteUser);
+        res.send({
+            success: true,
+            message: '회원정보 DB 삭제 완료',
+        });
+    } catch (error) {
+        console.log('회원정보 DB 삭제 에러');
+        res.send({
+            success: false,
+            message: '회원정보 DB 삭제 에러',
+        });
+    }
+};

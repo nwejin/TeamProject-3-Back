@@ -99,6 +99,7 @@ exports.login = async (req, res) => {
                 // 카카오 로그인 토큰 저장
                 res.cookie('kakaoToken', kakaoToken, cookieConfig);
                 res.json({ success: true, cookieId: req.cookies.saveId });
+                kakaoToken = '';
             } catch (error) {
                 res.send('user db 저장 오류');
                 console.log(error);
@@ -136,7 +137,7 @@ exports.exit = async (req, res) => {
     const uri = process.env.API_HOST + '/v1/user/unlink';
     const param = null;
     const header = {
-        Authorization: 'Bearer ' + kakaoToken,
+        Authorization: 'Bearer ' + req.body.kakaoToken,
     };
     try {
         var rtn = await call('POST', uri, param, header);

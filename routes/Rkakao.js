@@ -4,6 +4,6 @@ const Ckakao = require('../controllers/Ckakao');
 
 router.get('/login', Ckakao.login);
 // router.get('/logout', Ckakao.logout);
-router.get('/exit', Ckakao.exit);
+router.post('/exit', Ckakao.exit);
 
 module.exports = router;
