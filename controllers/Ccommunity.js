@@ -77,6 +77,8 @@ exports.communityRead = async (req, res) => {
 // exports.communityLike = asy;
 
 // 댓글 작성
+exports.commentWrite = async (req, res) => {};
+
 exports.communityCommentWrite = async (req, res) => {
     try {
         console.log('Received POST request to /community/commentWrite');
@@ -90,5 +92,18 @@ exports.communityCommentWrite = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).send('댓글 작성 실패');
+    }
+};
+
+exports.getMainBoards = async (req, res) => {
+    try {
+        const board = await CommunitySchema.find().limit(5);
+        if (board.length === 0) {
+            res.send({ success: false, msg: '등록한 글이 없습니다.' });
+        } else {
+            res.send({ success: true, board: board });
+        }
+    } catch (error) {
+        console.log(error);
     }
 };

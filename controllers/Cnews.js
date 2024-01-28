@@ -230,6 +230,41 @@ exports.getWords = async (req, res) => {
 };
 
 
+// 메이페이지 뉴스 2개 가져오기
+exports.getMainNews = async (req, res) => {
+    try {
+        const news = await NewsSchema.find().limit(5);
+        console.log(news);
+        if (news.length === 0) {
+            res.send({ success: false, msg: '등록된 뉴스가 없습니다.' });
+        } else {
+            res.send({ success: true, news: news });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// 유저가 좋아요한 단어 가져오기
+exports.getMyWords = async (req, res) => {
+    try {
+        const id = tokenCheck(req);
+
+        // 내 단어장 스키마로 수정할 것
+        const words = await NewsSchema.find({
+            user_id: id,
+        });
+        console.log(words);
+        if (words.length === 0) {
+            res.send({ success: false, msg: '좋아요한 단어가 없습니다.' });
+        } else {
+            res.send({ success: true, words: words });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 
 // ------------------------------------------------------------------
 
@@ -282,3 +317,4 @@ exports.saveMyWord = async (req, res) => {
         console.error(error);
     }
 }
+

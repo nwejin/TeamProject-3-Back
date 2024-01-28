@@ -1,8 +1,10 @@
 // const Cindex = require('../controllers/Cindex');
 const Cuser = require('../controllers/Cuser');
 const Cmy = require('../controllers/Cmypage');
-const { default: tokenCheck } = require('../utils/tokenCheck');
 const router = require('express').Router();
+
+
+// router.get('/createUser', Cuser.userInsert);
 
 // 로그인 기능
 router.post('/login', Cuser.userLogin);
@@ -24,9 +26,7 @@ router.post('/findPw', Cuser.userFindPw);
 
 // 비밀번호 변경하기
 router.post('/changePw', Cuser.userChangePw);
-// router.get('/', (req) => {
-//     Cuser.hi(req);
-// });
+
 router.get('/hi', Cuser.getMypage);
 
 module.exports = router;

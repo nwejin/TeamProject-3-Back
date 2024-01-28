@@ -48,4 +48,7 @@ router.post('/commentWrite', Ccommunity.communityCommentWrite);
 // 글 삭제
 // router.post('/like', Ccommunity.communityLike);
 
+// 메인페이지 커뮤니티글 5개 가져오기
+router.get('/mainBoards', Ccommunity.getMainBoards);
+
 module.exports = router;
