@@ -23,11 +23,12 @@ exports.communityWrite = async (req, res) => {
         const user = await UserSchema.findOne({
             user_id: userId,
         });
-        if (user) {
-            return user.user_nickname;
+        if (!user) {
+            return res.status(404).send('사용자 확인 불가');
         }
 
         const nickName = user.user_nickname;
+        console.log(nickName);
 
         // console.log('req.body>', req.body);
 
@@ -37,8 +38,7 @@ exports.communityWrite = async (req, res) => {
         const imageUrl = req.file ? req.file.location : null;
         // console.log('Uploaded Image URL:', imageUrl);
         await CommunitySchema.create({
-            // userId: userId,
-            // userNickName: nickName,
+            userNickName: nickName,
             title: req.body.title,
             content: req.body.content,
             subject: req.body.subject,
@@ -58,8 +58,6 @@ exports.communityWrite = async (req, res) => {
     }
 };
 
-// 좋아요 데이터
-
 // 2. 저장된 값 불러와서 메인 커뮤니티 화면에  보내주기 (최신순으로)
 exports.communityRead = async (req, res) => {
     // DB에서 데이터 가져오기
@@ -75,5 +73,22 @@ exports.communityRead = async (req, res) => {
     }
 };
 
+// 좋아요 데이터
+// exports.communityLike = asy;
+
 // 댓글 작성
-exports.commentWrite = async (req, res) => {};
+exports.communityCommentWrite = async (req, res) => {
+    try {
+        console.log('Received POST request to /community/commentWrite');
+        await CommentSchema.create({
+            communityId: req.body.postId,
+            userId: req.body.userId,
+            content: req.body.content,
+            date: new Date().toISOString(),
+        });
+        res.send('댓글 작성 완료!');
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('댓글 작성 실패');
+    }
+};
