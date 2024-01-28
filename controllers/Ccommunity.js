@@ -95,3 +95,16 @@ exports.communityRead = async (req, res) => {
 
 // 댓글 작성
 exports.commentWrite = async (req, res) => {};
+
+exports.getMainBoards = async (req, res) => {
+    try {
+        const board = await CommunitySchema.find().limit(5);
+        if (board.length === 0) {
+            res.send({ success: false, msg: '등록한 글이 없습니다.' });
+        } else {
+            res.send({ success: true, board: board });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};

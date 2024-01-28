@@ -44,4 +44,7 @@ router.get('/read', Ccommunity.communityRead);
 
 // 글 삭제
 
+// 메인페이지 커뮤니티글 5개 가져오기
+router.get('/mainBoards', Ccommunity.getMainBoards);
+
 module.exports = router;

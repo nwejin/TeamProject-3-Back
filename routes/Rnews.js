@@ -14,4 +14,13 @@ router.get('/geteconomy', Cnews.getEconomyNews);
 
 router.get('/getWords', Cnews.getWords);
 
+// 메인페이지 뉴스 2개 가져오기
+router.get('/mainNews', Cnews.getMainNews);
+
+// 메인페이지 뉴스 2개 가져오기
+router.get('/mainNews', Cnews.getMainNews);
+
+// 유저가 좋아요한 단어 가져오기
+router.get('/likedWords', Cnews.getMyWords);
+
 module.exports = router;
