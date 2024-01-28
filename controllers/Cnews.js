@@ -1,4 +1,5 @@
 const NewsSchema = require('../models/NewsSchema');
+const UserSchema = require('../models/UserSchema');
 const WordsSchema = require('../models/WordSchema');
 const getCoinNewsList = require('../utils/coinCrawling');
 const { getNaverNewsList, getMainNewsList } = require('../utils/naverCrawling');
@@ -49,7 +50,8 @@ exports.sendCoinNews = async (req, res) => {
     }
 };
 
-//------------------------------------------------------------------
+// ------------------------------------------------------------------
+
 exports.resetNewsList = async (req, res) => {
     try {
         // 웹 크롤링을 비동기적으로 실행
@@ -213,7 +215,10 @@ exports.getEconomyNews = async (req, res) => {
 // const economyNews = await NewsSchema.find({ group: 3 }); 경제
 ``;
 
-// 단어 전송
+
+// ------------------------------------------------------------------
+
+// Db에서 newsDetail로 단어 전송
 exports.getWords = async (req, res) => {
     try {
         const words = await WordsSchema.find();
@@ -223,6 +228,7 @@ exports.getWords = async (req, res) => {
         console.error(error);
     }
 };
+
 
 // 메이페이지 뉴스 2개 가져오기
 exports.getMainNews = async (req, res) => {
@@ -258,3 +264,57 @@ exports.getMyWords = async (req, res) => {
         console.log(error);
     }
 };
+
+
+// ------------------------------------------------------------------
+
+// 기존에 하트 누른 단어인지 검사
+exports.checkMyWord = async (req, res) => {
+    try {
+        const modalWord = req.query.modalWord;
+        // console.log('하트체크',modalWord);
+        const id = await tokenCheck(req);
+
+        const user = await UserSchema.findOne({user_id: id})
+        if(user) {
+            const saveCheck = user.word_bookmark.some(word => word._id === modalWord._id);
+            if(saveCheck) {
+                res.json({ saved: saveCheck });
+            } else {
+                res.json({ saved: saveCheck });
+            }
+        }
+    } catch(error) {
+        console.error(error);
+    }
+    
+}
+
+
+// wordModal에서 하트 누른 단어 userDb에 저장
+exports.saveMyWord = async (req, res) => {
+    try {
+        // console.log(req.body);
+        const modalWord = req.body.modalWord;
+        // console.log(modalWord);
+        const id = await tokenCheck(req);
+        // console.log(id);
+        const user = await UserSchema.findOne({user_id : id})
+        if (user) {
+            const duplicateCheck = user.word_bookmark.some(word => word._id === modalWord._id);
+            if(!duplicateCheck) {
+                user.word_bookmark.push(modalWord);
+                await user.save();
+            } else {
+                user.word_bookmark.pop(modalWord);
+                await user.save();
+            }
+            res.status(200).json({success: true, message: '단어 저장 성공!'})
+        } else {
+            res.status(404).json({success: false, message: '사용자를 찾을 수 없음'})
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+

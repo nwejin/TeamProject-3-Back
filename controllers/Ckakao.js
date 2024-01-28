@@ -78,6 +78,7 @@ exports.login = async (req, res) => {
                 });
                 console.log('checkUser', checkUser);
 
+                // 해당 유저가 DB에 없으면 DOCUMENT 생성
                 if (!checkUser) {
                     const newUser = await UserSchema.create({
                         user_id: userid,
@@ -89,10 +90,16 @@ exports.login = async (req, res) => {
                     });
                     console.log('newUser', newUser);
                 }
+
+                // 카카오 로그인 여부 확인
                 res.cookie('isKakao', true, cookieConfig);
+                // 현재 사용자 로그인 여부 확인 (카카오 아이디 jwt)
                 const token = jwt.sign({ id: userid }, process.env.JWTSECRET);
                 res.cookie('jwtCookie', token, cookieConfig);
+                // 카카오 로그인 토큰 저장
+                res.cookie('kakaoToken', kakaoToken, cookieConfig);
                 res.json({ success: true, cookieId: req.cookies.saveId });
+                kakaoToken = '';
             } catch (error) {
                 res.send('user db 저장 오류');
                 console.log(error);
@@ -108,27 +115,29 @@ exports.login = async (req, res) => {
     }
 };
 
-exports.logout = async (req, res) => {
-    const uri = process.env.API_HOST + '/v1/user/logout';
-    const param = null;
-    const header = {
-        Authorization: 'Bearer ' + kakaoToken,
-    };
-    try {
-        var rtn = await call('POST', uri, param, header);
-        kakaoToken = '';
-        res.send(rtn);
-    } catch (error) {
-        console.log(error);
-        res.send('로그아웃 실패');
-    }
-};
+// 로그아웃
+// exports.logout = async (req, res) => {
+//     const uri = process.env.API_HOST + '/v1/user/logout';
+//     const param = null;
+//     const header = {
+//         Authorization: 'Bearer ' + kakaoToken,
+//     };
+//     try {
+//         var rtn = await call('POST', uri, param, header);
+//         kakaoToken = '';
+//         res.send(rtn);
+//     } catch (error) {
+//         console.log(error);
+//         res.send('로그아웃 실패');
+//     }
+// };
 
+// 회원탈퇴
 exports.exit = async (req, res) => {
     const uri = process.env.API_HOST + '/v1/user/unlink';
     const param = null;
     const header = {
-        Authorization: 'Bearer ' + kakaoToken,
+        Authorization: 'Bearer ' + req.body.kakaoToken,
     };
     try {
         var rtn = await call('POST', uri, param, header);

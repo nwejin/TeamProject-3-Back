@@ -3,41 +3,10 @@ const CommentSchema = require('../models/CommentSchema');
 const ReCommentSchema = require('../models/ReCommentSchema');
 
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-// const { S3Client } = require('@aws-sdk/client-s3');
-// // aws-s3관련 (이미지)
-// const AWS = require('aws-sdk');
-// const multer = require('multer');
-// const multerS3 = require('multer-s3');
-// const uuid = require('uuid4');
-
-// require('dotenv').config();
-
-// // s3 정보 저장
-// const s3 = new S3Client({
-//     region: process.env.AWS_REGION,
-//     credentials: {
-//         accessKeyId: process.env.AWS_ACCESSKEY,
-//         secretAccessKey: process.env.AWS_SECRECTACCESSKEY,
-//     },
-// });
-
-// // multer 설정
-// const storage = multerS3({
-//     s3: s3,
-//     acl: 'public-read-write',
-//     bucket: process.env.AWS_BUCKET,
-//     contentType: multerS3.AUTO_CONTENT_TYPE,
-//     key: (req, file, cb) => {
-//         const filename = `${uuid()}-${file.originalname}`;
-//         cb(null, filename);
-//     },
-//     // limits: { fileSize: 5 * 1024 * 1024 },
-// });
-
-// // exports.upload.single('file');
-
-// const upload = multer({ storage: storage });
+const { tokenCheck } = require('../utils/tokenCheck');
+const UserSchema = require('../models/UserSchema');
 
 exports.community = (req, res) => {};
 
@@ -47,6 +16,20 @@ exports.community = (req, res) => {};
 exports.communityWrite = async (req, res) => {
     try {
         console.log('Received POST request to /community/write');
+
+        const userId = await tokenCheck(req);
+        console.log(userId);
+
+        const user = await UserSchema.findOne({
+            user_id: userId,
+        });
+        if (!user) {
+            return res.status(404).send('사용자 확인 불가');
+        }
+
+        const nickName = user.user_nickname;
+        console.log(nickName);
+
         // console.log('req.body>', req.body);
 
         // console.log('req.body.file >', req.body.file);
@@ -55,6 +38,7 @@ exports.communityWrite = async (req, res) => {
         const imageUrl = req.file ? req.file.location : null;
         // console.log('Uploaded Image URL:', imageUrl);
         await CommunitySchema.create({
+            userNickName: nickName,
             title: req.body.title,
             content: req.body.content,
             subject: req.body.subject,
@@ -67,16 +51,12 @@ exports.communityWrite = async (req, res) => {
 
         res.send('게시글 작성 완료');
 
-        const userDetail = jwt.verify(req.cookies.jwtCookie);
-        console.log(userDetail);
-        console.log(req.cookies.jwtCookie);
+        // console.log(req.cookies.jwtCookie);
     } catch (err) {
         console.log(err);
         res.status(500).send('게시글 작성 실패');
     }
 };
-
-// 좋아요 데이터
 
 // 2. 저장된 값 불러와서 메인 커뮤니티 화면에  보내주기 (최신순으로)
 exports.communityRead = async (req, res) => {
@@ -93,8 +73,27 @@ exports.communityRead = async (req, res) => {
     }
 };
 
+// 좋아요 데이터
+// exports.communityLike = asy;
+
 // 댓글 작성
 exports.commentWrite = async (req, res) => {};
+
+exports.communityCommentWrite = async (req, res) => {
+    try {
+        console.log('Received POST request to /community/commentWrite');
+        await CommentSchema.create({
+            communityId: req.body.postId,
+            userId: req.body.userId,
+            content: req.body.content,
+            date: new Date().toISOString(),
+        });
+        res.send('댓글 작성 완료!');
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('댓글 작성 실패');
+    }
+};
 
 exports.getMainBoards = async (req, res) => {
     try {

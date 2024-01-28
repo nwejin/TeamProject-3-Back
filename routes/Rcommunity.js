@@ -42,7 +42,11 @@ router.post('/write', upload.single('file'), Ccommunity.communityWrite);
 // 글 읽기
 router.get('/read', Ccommunity.communityRead);
 
+// 댓글 데이터 추가
+router.post('/commentWrite', Ccommunity.communityCommentWrite);
+
 // 글 삭제
+// router.post('/like', Ccommunity.communityLike);
 
 // 메인페이지 커뮤니티글 5개 가져오기
 router.get('/mainBoards', Ccommunity.getMainBoards);

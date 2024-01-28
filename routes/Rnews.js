@@ -13,6 +13,8 @@ router.get('/getcoin', Cnews.getCoinNews);
 router.get('/geteconomy', Cnews.getEconomyNews);
 
 router.get('/getWords', Cnews.getWords);
+router.get('/checkMyWord', Cnews.checkMyWord);
+router.post('/saveMyWord', Cnews.saveMyWord);
 
 // 메인페이지 뉴스 2개 가져오기
 router.get('/mainNews', Cnews.getMainNews);
