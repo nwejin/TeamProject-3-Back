@@ -28,6 +28,7 @@ exports.communityWrite = async (req, res) => {
         }
 
         const nickName = user.user_nickname;
+        const user_id = user._id;
         console.log(nickName);
 
         // console.log('req.body>', req.body);
@@ -38,6 +39,7 @@ exports.communityWrite = async (req, res) => {
         const imageUrl = req.file ? req.file.location : null;
         // console.log('Uploaded Image URL:', imageUrl);
         await CommunitySchema.create({
+            userId: user_id,
             userNickName: nickName,
             title: req.body.title,
             content: req.body.content,
