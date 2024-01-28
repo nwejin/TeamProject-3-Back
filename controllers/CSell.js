@@ -54,6 +54,23 @@ exports.post_profit = async (req, res) => {
     }
 };
 
+exports.post_showRecord = async (req, res) => {
+    try{
+        const userid = await tokenCheck(req);       //여기서 아이디 검증 -> findOne에서 할 필요 x
+        console.log("userid record", userid);
+
+        const record = await VirtualSchema.findOne({userid: userid});
+        const {profit, win, loss} = record;
+
+        console.log("레코드 구조 분해 > ", profit, win, loss);
+
+        res.send({profit: profit, win:win, loss:loss});
+    }catch(error){
+        console.log("post record error > ", error)
+        res.send(error);
+    }
+}
+
 // 클릭한 용어의 설명을 출력합니다.
 exports.get_vocabulary = async (req, res) => {
     try {
