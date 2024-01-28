@@ -1,7 +1,8 @@
 const router = require('express').Router();
-const Cbuy = require('../controllers/CSell');
+const Csell = require('../controllers/CSell');
 
-router.post('/profit', Cbuy.post_profit);
-router.get('/vocabulary', Cbuy.get_vocabulary);
+router.post('/profit', Csell.post_profit);
+router.post('/record', Csell.post_showRecord);
+router.get('/vocabulary', Csell.get_vocabulary);
 
 module.exports = router;
