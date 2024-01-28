@@ -4,11 +4,6 @@ const Cmy = require('../controllers/Cmypage');
 const { default: tokenCheck } = require('../utils/tokenCheck');
 const router = require('express').Router();
 
-// router.get('/', () => {
-//     Cindex.getMain;
-// });
-// router.get('/createUser', Cuser.userInsert);
-
 // 로그인 기능
 router.post('/login', Cuser.userLogin);
 
