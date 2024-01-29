@@ -16,6 +16,7 @@ exports.getMyInfo = async (req, res) => {
         res.send({ info: user });
     } catch (error) {
         console.log(error);
+        res.send('false');
     }
 };
 

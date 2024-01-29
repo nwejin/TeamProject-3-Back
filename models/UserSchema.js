@@ -19,16 +19,15 @@ const UserSchema = new Schema({
         require: true,
         type: String,
     },
-    word_bookmark: [
-        {
-            ref: 'WordSchema',
-            type: Object,
-        },
-    ],
-    news_bookmark: {
+
+    word_bookmark: [{
+        ref: 'WordSchema',
+        type: Object,
+    }],
+    news_bookmark: [{
         ref: 'NewsSchema',
-        type: [String],
-    },
+        type: Object,
+    }],
     isKakao: {
         require: true,
         type: Number,
