@@ -8,7 +8,7 @@ exports.getMyInfo = async (req, res) => {
     try {
         // console.log(req.body.id);
         const id = await tokenCheck(req);
-        console.log('토큰 체크 후 아이디');
+        // console.log('토큰 체크 후 아이디');
         const user = await UserSchema.findOne({
             user_id: id,
         });
@@ -16,6 +16,7 @@ exports.getMyInfo = async (req, res) => {
         res.send({ info: user });
     } catch (error) {
         console.log(error);
+        res.send('false');
     }
 };
 
