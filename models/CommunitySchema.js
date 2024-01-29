@@ -35,6 +35,12 @@ const CommunitySchema = new Schema(
             type: Number,
             default: 0,
         },
+        likedUser: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+            },
+        ],
         image: {
             type: String,
         },
