@@ -177,6 +177,56 @@ exports.communityRank = async (req, res) => {
     }
 };
 
+// 대댓글 작성
+exports.replyWrite = async (req, res) => {
+    try {
+        console.log('Received POST request to /community/replyWrite');
+
+        const userId = await tokenCheck(req);
+        console.log(userId);
+
+        const user = await UserSchema.findOne({
+            user_id: userId,
+        });
+        if (!user) {
+            return res.status(404).send('사용자 확인 불가');
+        }
+
+        const nickName = user.user_nickname;
+        const user_id = user._id;
+
+        await ReCommentSchema.create({
+            commentId: req.body.commentId,
+            userId: user_id,
+            userNickName: nickName,
+            content: req.body.content,
+            date: new Date().toISOString(),
+        });
+        res.send('댓글 작성 완료!');
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('댓글 작성 실패');
+    }
+};
+
+//대댓글 호출
+exports.replyRead = async (req, res) => {
+    // // DB에서 데이터 가져오기
+    const commentID = req.query.data;
+    console.log(commentID);
+    try {
+        const comment = await ReCommentSchema.find({
+            commentId: commentID,
+        }).sort({
+            date: -1,
+        });
+        res.json(comment);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('데이터 불러오기 실패');
+    }
+};
+
 exports.getMainBoards = async (req, res) => {
     try {
         const board = await CommunitySchema.find().limit(5);
