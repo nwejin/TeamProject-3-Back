@@ -55,21 +55,45 @@ exports.post_profit = async (req, res) => {
 };
 
 exports.post_showRecord = async (req, res) => {
-    try{
-        const userid = await tokenCheck(req);       //여기서 아이디 검증 -> findOne에서 할 필요 x
-        console.log("userid record", userid);
+    try {
+        const userid = await tokenCheck(req); //여기서 아이디 검증 -> findOne에서 할 필요 x
+        console.log('userid record', userid);
 
-        const record = await VirtualSchema.findOne({userid: userid});
-        const {profit, win, loss} = record;
+        const record = await VirtualSchema.findOne({ userid: userid });
+        const { profit, win, loss, profitArray } = record;
 
-        console.log("레코드 구조 분해 > ", profit, win, loss);
+        console.log('레코드 구조 분해 > ', profit, win, loss, profitArray);
 
-        res.send({profit: profit, win:win, loss:loss});
-    }catch(error){
-        console.log("post record error > ", error)
+        res.send({
+            profit: profit,
+            win: win,
+            loss: loss,
+            profitArray: profitArray,
+        });
+    } catch (error) {
+        console.log('post record error > ', error);
         res.send(error);
     }
-}
+};
+
+exports.post_ProfitAndLoss = async (req, res) => {
+    try {
+        const { profit } = req.body;
+        const userid = await tokenCheck(req);
+        if (userid) {
+            const ProfitAndLoss = await VirtualSchema.findOneAndUpdate(
+                { userid: userid },
+                { $push: { profitArray: profit } },
+                { returnDocument: 'after' }
+            );
+            console.log('profitAnd loss', ProfitAndLoss.profitArray); // 이 부분을 추가하여 배열을 출력
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+    res.send();
+};
 
 // 클릭한 용어의 설명을 출력합니다.
 exports.get_vocabulary = async (req, res) => {

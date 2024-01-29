@@ -20,6 +20,9 @@ const VirtualSchema = new Schema({
   loss: {
     type: Number,
   },
+  profitArray: {
+    type: [Number],
+  },
 });
 
 module.exports = mongoose.model("Virtual", VirtualSchema);
