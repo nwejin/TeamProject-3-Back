@@ -28,6 +28,7 @@ exports.communityWrite = async (req, res) => {
         }
 
         const nickName = user.user_nickname;
+        const user_Profile = user.user_profile;
         const user_id = user._id;
         console.log(nickName);
 
@@ -76,7 +77,43 @@ exports.communityRead = async (req, res) => {
 };
 
 // 좋아요 데이터
-// exports.communityLike = asy;
+exports.communityLike = async (req, res) => {
+    try {
+        console.log('Received POST request to /community/like');
+        const userId = await tokenCheck(req);
+        console.log(userId);
+
+        // 어떤 유저가 좋아요 했는지 확인
+        const user = await UserSchema.findOne({
+            user_id: userId,
+        });
+        if (!user) {
+            return res.status(404).send('사용자 확인 불가');
+        }
+        console.log('req.body.postId>', req.body.postId); // 게시글 아이디
+        console.log('req.body.like>', req.body.like); // 1 (좋아요)
+
+        // 커뮤니티에서 id로 게시글 찾기
+        const community = await CommunitySchema.findOne({
+            _id: req.body.postId || req.body.data._id,
+        });
+        console.log(community);
+        if (community) {
+            if (community.likedUser.includes(user._id)) {
+                return res.send('이미 좋아요를 눌렀음');
+            }
+        }
+
+        community.like += req.body.like;
+        community.likedUser.push(user._id);
+        await community.save();
+
+        res.send('좋아요 완료');
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('좋아요 오류 ');
+    }
+};
 
 // 댓글 작성
 exports.commentWrite = async (req, res) => {
@@ -118,6 +155,22 @@ exports.commentRead = async (req, res) => {
             date: -1,
         });
         res.json(comment);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('데이터 불러오기 실패');
+    }
+};
+
+// 좋아요 순위로 가져오기
+exports.communityRank = async (req, res) => {
+    // DB에서 데이터 가져오기
+    try {
+        const rankPosts = await CommunitySchema.find()
+            .sort({
+                like: -1,
+            })
+            .limit(5);
+        res.json(rankPosts);
     } catch (err) {
         console.log(err);
         res.status(500).send('데이터 불러오기 실패');

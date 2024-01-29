@@ -19,6 +19,7 @@ const UserSchema = new Schema({
         require: true,
         type: String,
     },
+
     word_bookmark: [{
         ref: 'WordSchema',
         type: Object,
@@ -34,6 +35,7 @@ const UserSchema = new Schema({
     },
     user_profile: {
         type: String,
+        default: process.env.DEFAULTIMAGE,
     },
 });
 
