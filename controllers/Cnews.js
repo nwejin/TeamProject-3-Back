@@ -234,7 +234,7 @@ exports.getWords = async (req, res) => {
 exports.getMainNews = async (req, res) => {
     try {
         const news = await NewsSchema.find().limit(5);
-        console.log(news);
+        // console.log(news);
         if (news.length === 0) {
             res.send({ success: false, msg: '등록된 뉴스가 없습니다.' });
         } else {
@@ -279,9 +279,9 @@ exports.checkMyWord = async (req, res) => {
         if(user) {
             const saveCheck = user.word_bookmark.some(word => word._id === modalWord._id);
             if(saveCheck) {
-                res.json({ saved: saveCheck });
+                res.json({ isSavedWord: saveCheck });
             } else {
-                res.json({ saved: saveCheck });
+                res.json({ isSavedWord: saveCheck });
             }
         }
     } catch(error) {
@@ -318,3 +318,53 @@ exports.saveMyWord = async (req, res) => {
     }
 }
 
+
+// news 저장 유무 확인
+exports.checkMyNews = async (req, res) => {
+    try {
+        const savedNews = req.query.data;
+        // console.log('뉴스체크',data);
+        const id = await tokenCheck(req);
+
+        const user = await UserSchema.findOne({user_id: id})
+        if(user) {
+            const saveCheck = user.news_bookmark.some(news => news._id === savedNews._id);
+            if(saveCheck) {
+                res.json({ isSavedNews: saveCheck });
+            } else {
+                res.json({ isSavedNews: saveCheck });
+            }
+        }
+    } catch(error) {
+        console.error(error);
+    }
+    
+}
+
+
+// news 저장
+exports.saveMyNews = async (req, res) => {
+    try {
+        // console.log(req.body);
+        const savedNews = req.body.data;
+        const id = await tokenCheck(req);
+        // console.log(id);
+
+        const user = await UserSchema.findOne({user_id : id})
+        if (user) {
+            const duplicateCheck = user.news_bookmark.some(news => news._id === savedNews._id);
+            if(!duplicateCheck) {
+                user.news_bookmark.push(savedNews);
+                await user.save();
+            } else {
+                user.news_bookmark.pop(savedNews);
+                await user.save();
+            }
+            res.status(200).json({success: true, message: '단어 저장 성공!'})
+        } else {
+            res.status(404).json({success: false, message: '사용자를 찾을 수 없음'})
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
