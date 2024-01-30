@@ -48,8 +48,17 @@ router.post('/commentWrite', Ccommunity.commentWrite);
 // // 댓글 호출
 router.get('/commentRead', Ccommunity.commentRead);
 
-// 글 삭제
-// router.post('/like', Ccommunity.communityLike);
+// 좋아요 추가
+router.post('/like', Ccommunity.communityLike);
+
+// 좋아요 순위로 가져오기
+router.get('/rank', Ccommunity.communityRank);
+
+// 대댓글 추가
+router.post('/replyWrite', Ccommunity.replyWrite);
+
+// 대댓글 가져오기
+router.get('/replyRead', Ccommunity.replyRead);
 
 // 메인페이지 커뮤니티글 5개 가져오기
 router.get('/mainBoards', Ccommunity.getMainBoards);

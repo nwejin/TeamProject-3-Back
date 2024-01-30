@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const { Schema } = require("mongoose");
+const mongoose = require('mongoose');
+const { Schema } = require('mongoose');
 
 const NewsSchema = new Schema({
     url: {
@@ -43,6 +43,9 @@ const NewsSchema = new Schema({
         require: true,
         default: 0,
     },
+    subtitle: {
+        type: String,
+    },
 });
 
-module.exports = mongoose.model("News", NewsSchema);
+module.exports = mongoose.model('News', NewsSchema);
