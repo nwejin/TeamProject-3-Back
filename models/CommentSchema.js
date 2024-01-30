@@ -18,6 +18,7 @@ const CommentSchema = new Schema({
         type: String,
         require: true,
     },
+
     content: {
         require: true,
         type: String,

@@ -87,12 +87,13 @@ exports.post_ProfitAndLoss = async (req, res) => {
                 { returnDocument: 'after' }
             );
             console.log('profitAnd loss', ProfitAndLoss.profitArray); // 이 부분을 추가하여 배열을 출력
+            // res.send(ProfitAndLoss.profitArray);
         }
     } catch (error) {
         console.log(error);
     }
 
-    res.send();
+    res.send(true);
 };
 
 // 클릭한 용어의 설명을 출력합니다.
