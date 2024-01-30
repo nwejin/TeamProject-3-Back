@@ -24,6 +24,9 @@ router.post('/saveMyNews', Cnews.saveMyNews);
 router.get('/mainNews', Cnews.getMainNews);
 
 // 유저가 좋아요한 단어 가져오기
-router.get('/likedWords', Cnews.getMyWords);
+router.post('/likedWords', Cnews.getMyWords);
+
+// 단어 좋아요 취소하기
+router.post('/deleteWords', Cnews.deleteMyWords);
 
 module.exports = router;

@@ -16,7 +16,25 @@ const getOriginNews = async (originUrl) => {
         // cheerio를 사용하여 HTML를 파싱
         const $ = cheerio.load(newsDecoded);
         // 원하는 정보를 추출하여 출력 또는 다른 작업 수행
-        const newContent = $('#dic_area').text().trim();
+        let newContent = $('#dic_area').text().trim();
+        const imgDesc = $('#dic_area > span.end_photo_org > em').text();
+        newContent = newContent.replace(imgDesc, '');
+        let subTitle = $('#dic_area > strong').first().text();
+        newContent = newContent.replace(subTitle, '');
+        const bTag = $('#dic_area > b').first().text();
+        newContent = newContent.replace(bTag, '');
+        const divTag = $('#dic_area > div').first().text();
+        newContent = newContent.replace(divTag, '');
+        if (!subTitle) {
+            if (!bTag) {
+                subTitle = divTag;
+            } else {
+                subTitle = bTag;
+            }
+        }
+        console.log('subTitle', subTitle);
+        // console.log('imgDesc', imgDesc);
+        // console.log('newContent', newContent);
         const bigImageUrl = $('#img1').attr('data-src');
         const newsDate = $(
             '#ct > div.media_end_head.go_trans > div.media_end_head_info.nv_notrans > div.media_end_head_info_datestamp > div > span'
@@ -26,6 +44,7 @@ const getOriginNews = async (originUrl) => {
             .trim();
         // console.log(newsDate);
         var bigImageAndContent = {
+            subTitle,
             newContent,
             bigImageUrl,
             newsDate,
@@ -82,6 +101,7 @@ const getNaverNewsList = async (newsFieldUrl) => {
                 const content = bigImageAndContent.newContent;
                 const bigimg = bigImageAndContent.bigImageUrl;
                 const date = bigImageAndContent.newsDate;
+                const subtitle = bigImageAndContent.subTitle;
 
                 listResult.push({
                     url,
@@ -90,6 +110,7 @@ const getNaverNewsList = async (newsFieldUrl) => {
                     bigimg,
                     date,
                     content,
+                    subtitle,
                 });
             } catch (error) {
                 // console.log("list1 push 에러");
@@ -104,7 +125,7 @@ const getNaverNewsList = async (newsFieldUrl) => {
     }
 };
 
-// getNaverNewsList('https://news.naver.com/breakingnews/section/101/258');
+// getNaverNewsList('https://news.naver.com/breakingnews/section/101/263');
 // 'https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=259'
 
 // --------------------------------------------------------------------------------------
@@ -140,6 +161,7 @@ const getMainNewsList = async (newsFieldUrl) => {
                 const content = bigImageAndContent.newContent;
                 const bigimg = bigImageAndContent.bigImageUrl;
                 const date = bigImageAndContent.newsDate;
+                const subtitle = bigImageAndContent.subTitle;
 
                 listResult.push({
                     url,
@@ -148,6 +170,7 @@ const getMainNewsList = async (newsFieldUrl) => {
                     bigimg,
                     date,
                     content,
+                    subtitle,
                 });
             } catch (error) {
                 // console.log("list1 push 에러");
