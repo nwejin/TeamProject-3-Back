@@ -65,10 +65,13 @@ exports.communityWrite = async (req, res) => {
 exports.communityRead = async (req, res) => {
     // DB에서 데이터 가져오기
     try {
-        const communityPosts = await CommunitySchema.find().sort({
-            // 내림차순
-            date: -1,
-        });
+        const communityPosts = await CommunitySchema.find()
+            .populate('userId', 'user_nickname user_profile')
+            .sort({
+                // 내림차순
+                date: -1,
+            });
+        console.log(communityPosts);
         res.json(communityPosts);
     } catch (err) {
         console.log(err);
@@ -151,9 +154,11 @@ exports.commentRead = async (req, res) => {
     // // DB에서 데이터 가져오기
     const postId = req.query.postId;
     try {
-        const comment = await CommentSchema.find({ communityId: postId }).sort({
-            date: -1,
-        });
+        const comment = await CommentSchema.find({ communityId: postId })
+            .populate('userId', 'user_nickname user_profile')
+            .sort({
+                date: -1,
+            });
         res.json(comment);
     } catch (err) {
         console.log(err);
@@ -217,9 +222,11 @@ exports.replyRead = async (req, res) => {
     try {
         const comment = await ReCommentSchema.find({
             commentId: commentID,
-        }).sort({
-            date: -1,
-        });
+        })
+            .populate('userId', 'user_nickname user_profile')
+            .sort({
+                date: -1,
+            });
         res.json(comment);
     } catch (err) {
         console.log(err);
