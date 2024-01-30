@@ -215,7 +215,6 @@ exports.getEconomyNews = async (req, res) => {
 // const economyNews = await NewsSchema.find({ group: 3 }); 경제
 ``;
 
-
 // ------------------------------------------------------------------
 
 // Db에서 newsDetail로 단어 전송
@@ -229,11 +228,10 @@ exports.getWords = async (req, res) => {
     }
 };
 
-
 // 메이페이지 뉴스 2개 가져오기
 exports.getMainNews = async (req, res) => {
     try {
-        const news = await NewsSchema.find().limit(5);
+        const news = await NewsSchema.find().limit(2);
         console.log(news);
         if (news.length === 0) {
             res.send({ success: false, msg: '등록된 뉴스가 없습니다.' });
@@ -248,23 +246,51 @@ exports.getMainNews = async (req, res) => {
 // 유저가 좋아요한 단어 가져오기
 exports.getMyWords = async (req, res) => {
     try {
-        const id = tokenCheck(req);
+        const id = await tokenCheck(req);
+        // console.log(id);
 
-        // 내 단어장 스키마로 수정할 것
-        const words = await NewsSchema.find({
+        const user = await UserSchema.find({
             user_id: id,
         });
-        console.log(words);
-        if (words.length === 0) {
+        // console.log(user);
+        if (user.length === 0) {
             res.send({ success: false, msg: '좋아요한 단어가 없습니다.' });
         } else {
-            res.send({ success: true, words: words });
+            res.send({ success: true, user: user });
         }
     } catch (error) {
         console.log(error);
     }
 };
 
+// 단어 좋아요 취소하기
+exports.deleteMyWords = async (req, res) => {
+    try {
+        const id = await tokenCheck(req);
+        const no = req.body.no;
+
+        const result = await UserSchema.updateOne(
+            { user_id: id },
+            { $pull: { word_bookmark: { no: no } } }
+        );
+        console.log(result);
+        if (result.modifiedCount === 1) {
+            // 성공적으로 제거된 경우
+            res.send({
+                success: true,
+                msg: '단어가 성공적으로 제거되었습니다.',
+            });
+        } else {
+            // 해당 no를 가진 요소가 없는 경우
+            res.send({
+                success: false,
+                msg: '해당 단어를 찾을 수가 없습니다.',
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 // ------------------------------------------------------------------
 
@@ -275,21 +301,21 @@ exports.checkMyWord = async (req, res) => {
         // console.log('하트체크',modalWord);
         const id = await tokenCheck(req);
 
-        const user = await UserSchema.findOne({user_id: id})
-        if(user) {
-            const saveCheck = user.word_bookmark.some(word => word._id === modalWord._id);
-            if(saveCheck) {
+        const user = await UserSchema.findOne({ user_id: id });
+        if (user) {
+            const saveCheck = user.word_bookmark.some(
+                (word) => word._id === modalWord._id
+            );
+            if (saveCheck) {
                 res.json({ saved: saveCheck });
             } else {
                 res.json({ saved: saveCheck });
             }
         }
-    } catch(error) {
+    } catch (error) {
         console.error(error);
     }
-    
-}
-
+};
 
 // wordModal에서 하트 누른 단어 userDb에 저장
 exports.saveMyWord = async (req, res) => {
@@ -299,22 +325,26 @@ exports.saveMyWord = async (req, res) => {
         // console.log(modalWord);
         const id = await tokenCheck(req);
         // console.log(id);
-        const user = await UserSchema.findOne({user_id : id})
+        const user = await UserSchema.findOne({ user_id: id });
         if (user) {
-            const duplicateCheck = user.word_bookmark.some(word => word._id === modalWord._id);
-            if(!duplicateCheck) {
+            const duplicateCheck = user.word_bookmark.some(
+                (word) => word._id === modalWord._id
+            );
+            if (!duplicateCheck) {
                 user.word_bookmark.push(modalWord);
                 await user.save();
             } else {
                 user.word_bookmark.pop(modalWord);
                 await user.save();
             }
-            res.status(200).json({success: true, message: '단어 저장 성공!'})
+            res.status(200).json({ success: true, message: '단어 저장 성공!' });
         } else {
-            res.status(404).json({success: false, message: '사용자를 찾을 수 없음'})
+            res.status(404).json({
+                success: false,
+                message: '사용자를 찾을 수 없음',
+            });
         }
     } catch (error) {
         console.error(error);
     }
-}
-
+};

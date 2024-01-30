@@ -8,29 +8,12 @@ require('dotenv').config();
 const jwtSecret = process.env.JWTSECRET;
 const cookieConfig = {
     // httpOnly: true,
-    maxAge: 30 * 60 * 1000,
+    maxAge: 60 * 60 * 1000,
 };
 
 const cookieConfig2 = {
     maxAge: 7 * 24 * 60 * 60 * 1000,
 };
-
-// const tokenCheck = async (req) => {
-//     const token = req.cookies.jwtCookie;
-//     if (!token) {
-//         return false;
-//     } else {
-//         const result = jwt.verify(token, jwtSecret);
-//         const checkID = await UserSchema.findOne({
-//             user_id: result.id,
-//         });
-//         if (checkID) {
-//             return result.id;
-//         } else {
-//             return false;
-//         }
-//     }
-// };
 
 // exports.userInsert = async (req, res) => {
 //     await StockWordSchema.create({
