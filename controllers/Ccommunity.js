@@ -236,7 +236,7 @@ exports.replyRead = async (req, res) => {
 
 exports.getMainBoards = async (req, res) => {
     try {
-        const board = await CommunitySchema.find().limit(10);
+        const board = await CommunitySchema.find().limit(10).sort({ date: -1 });
         if (board.length === 0) {
             res.send({ success: false, msg: '등록한 글이 없습니다.' });
         } else {
