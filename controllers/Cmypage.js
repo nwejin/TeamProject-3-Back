@@ -78,11 +78,19 @@ exports.checkUserPassword = async (req, res) => {
     }
 };
 exports.modifyUserInfo = async (req, res) => {
-    const { user_nickname, user_changepw, user_email } = req.body.userData;
-    const currentUserId = req.body.currentUserId;
+    const { user_nickname, user_changepw, user_email } = req.body;
+    // req.body.userData;
+    // console.log('req body>', req.body);
+    // console.log('nickname>', req.body.user_nickname);
+    console.log(req.body.user_profile);
+    console.log(req.file);
+    const user_profile = req.file ? req.file.location : null;
+
+    console.log('user_profile', user_profile);
+    const currentUserId = req.body.user_id;
     try {
         console.log('현재 사용자 아이디', currentUserId);
-        console.log(req.body.userData);
+
         const hashedPw = bcrypt.hashSync(user_changepw, 10);
         const modifyUser = await UserSchema.updateOne(
             {
@@ -92,6 +100,7 @@ exports.modifyUserInfo = async (req, res) => {
                 user_email: user_email,
                 user_password: hashedPw,
                 user_nickname: user_nickname,
+                user_profile: user_profile,
             }
         );
         console.log(modifyUser);
