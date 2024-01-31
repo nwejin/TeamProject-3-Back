@@ -47,7 +47,6 @@ exports.communityWrite = async (req, res) => {
             subject: req.body.subject,
             // 파일
             image: imageUrl,
-            // req.file ? req.file.location : null,
             // 한국 시간 (등록 시간)
             date: new Date().toISOString(),
         });
