@@ -9,6 +9,7 @@ const CommunitySchema = new Schema(
             ref: 'User',
             require: true,
         },
+
         //  커뮤니티 데이터
         title: {
             require: true,
