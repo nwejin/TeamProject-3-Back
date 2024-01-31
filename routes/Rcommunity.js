@@ -63,4 +63,13 @@ router.get('/replyRead', Ccommunity.replyRead);
 // 메인페이지 커뮤니티글 5개 가져오기
 router.get('/mainBoards', Ccommunity.getMainBoards);
 
+// 커뮤니티 글 수정
+router.post('/modify', upload.none(), Ccommunity.modifyCommunity);
+
+// 커뮤니티 글 업데이트
+router.get('/update', Ccommunity.updateCommunity);
+
+// 커뮤니티 글 삭제
+router.post('/delete', Ccommunity.deleteCommunity);
+
 module.exports = router;
