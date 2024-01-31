@@ -24,10 +24,10 @@ const UserSchema = new Schema({
         ref: 'WordSchema',
         type: Object,
     }],
-    news_bookmark: [{
+    news_bookmark: {
         ref: 'NewsSchema',
-        type: Object,
-    }],
+        type: [String],
+    },
     isKakao: {
         require: true,
         type: Number,

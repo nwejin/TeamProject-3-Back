@@ -361,7 +361,7 @@ exports.checkMyNews = async (req, res) => {
         const user = await UserSchema.findOne({ user_id: id });
         if (user) {
             const saveCheck = user.news_bookmark.some(
-                (news) => news._id === savedNews._id
+                (news) => news === savedNews._id
             );
             if (saveCheck) {
                 res.json({ isSavedNews: saveCheck });
@@ -386,13 +386,13 @@ exports.saveMyNews = async (req, res) => {
         const user = await UserSchema.findOne({ user_id: id });
         if (user) {
             const duplicateCheck = user.news_bookmark.some(
-                (news) => news._id === savedNews._id
+                (news) => news === savedNews._id
             );
             if (!duplicateCheck) {
-                user.news_bookmark.push(savedNews);
+                user.news_bookmark.push(savedNews._id);
                 await user.save();
             } else {
-                user.news_bookmark.pop(savedNews);
+                user.news_bookmark.pop(savedNews._id);
                 await user.save();
             }
             res.status(200).json({ success: true, message: '단어 저장 성공!' });
