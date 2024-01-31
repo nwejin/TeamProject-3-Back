@@ -54,6 +54,7 @@ exports.post_profit = async (req, res) => {
     }
 };
 
+// 모의투자 통계
 exports.post_showRecord = async (req, res) => {
     try {
         const userid = await tokenCheck(req); //여기서 아이디 검증 -> findOne에서 할 필요 x
@@ -76,6 +77,7 @@ exports.post_showRecord = async (req, res) => {
     }
 };
 
+// P&L 출력
 exports.post_ProfitAndLoss = async (req, res) => {
     try {
         const { profit } = req.body;
