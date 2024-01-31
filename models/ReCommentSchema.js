@@ -18,10 +18,6 @@ const ReCommentSchema = new Schema({
         require: true,
         type: String,
     },
-    userNickName: {
-        type: String,
-        require: true,
-    },
     date: {
         type: String,
         default: Date.now,
