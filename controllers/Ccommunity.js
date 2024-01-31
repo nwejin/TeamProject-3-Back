@@ -18,7 +18,7 @@ exports.communityWrite = async (req, res) => {
         console.log('Received POST request to /community/write');
 
         const userId = await tokenCheck(req);
-        console.log(userId);
+        // console.log(userId);
 
         const user = await UserSchema.findOne({
             user_id: userId,
@@ -30,7 +30,7 @@ exports.communityWrite = async (req, res) => {
         const nickName = user.user_nickname;
         const user_Profile = user.user_profile;
         const user_id = user._id;
-        console.log(nickName);
+        // console.log(nickName);
 
         // console.log('req.body>', req.body);
 
@@ -70,7 +70,7 @@ exports.communityRead = async (req, res) => {
                 // 내림차순
                 date: -1,
             });
-        console.log(communityPosts);
+        // console.log(communityPosts);
         res.json(communityPosts);
     } catch (err) {
         console.log(err);
@@ -83,7 +83,7 @@ exports.communityLike = async (req, res) => {
     try {
         console.log('Received POST request to /community/like');
         const userId = await tokenCheck(req);
-        console.log(userId);
+        // console.log(userId);
 
         // 어떤 유저가 좋아요 했는지 확인
         const user = await UserSchema.findOne({
@@ -92,14 +92,14 @@ exports.communityLike = async (req, res) => {
         if (!user) {
             return res.status(404).send('사용자 확인 불가');
         }
-        console.log('req.body.postId>', req.body.postId); // 게시글 아이디
-        console.log('req.body.like>', req.body.like); // 1 (좋아요)
+        // console.log('req.body.postId>', req.body.postId); // 게시글 아이디
+        // console.log('req.body.like>', req.body.like); // 1 (좋아요)
 
         // 커뮤니티에서 id로 게시글 찾기
         const community = await CommunitySchema.findOne({
             _id: req.body.postId || req.body.data._id,
         });
-        console.log(community);
+        // console.log(community);
         if (community) {
             if (community.likedUser.includes(user._id)) {
                 return res.send('이미 좋아요를 눌렀음');
@@ -123,7 +123,7 @@ exports.commentWrite = async (req, res) => {
         console.log('Received POST request to /community/commentWrite');
 
         const userId = await tokenCheck(req);
-        console.log(userId);
+        // console.log(userId);
 
         const user = await UserSchema.findOne({
             user_id: userId,
@@ -187,7 +187,7 @@ exports.replyWrite = async (req, res) => {
         console.log('Received POST request to /community/replyWrite');
 
         const userId = await tokenCheck(req);
-        console.log(userId);
+        // console.log(userId);
 
         const user = await UserSchema.findOne({
             user_id: userId,
@@ -217,7 +217,7 @@ exports.replyWrite = async (req, res) => {
 exports.replyRead = async (req, res) => {
     // // DB에서 데이터 가져오기
     const commentID = req.query.data;
-    console.log(commentID);
+    // console.log(commentID);
     try {
         const comment = await ReCommentSchema.find({
             commentId: commentID,
@@ -243,5 +243,47 @@ exports.getMainBoards = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
+    }
+};
+
+exports.modifyCommunity = async (req, res) => {
+    try {
+        // console.log('수정 폼 데이터 받기', req.body);
+        const result = await CommunitySchema.updateOne(
+            { _id: req.body._id },
+            {
+                subject: req.body.subject,
+                title: req.body.title,
+                content: req.body.content,
+            }
+        );
+        // console.log('수정 결과', result);
+        res.send('데이터 수정 성공');
+    } catch (error) {
+        res.send('데이터 수정 실패');
+    }
+};
+
+exports.updateCommunity = async (req, res) => {
+    try {
+        const result = await CommunitySchema.findById(req.query.postid);
+        console.log(result);
+        res.send(result);
+    } catch (error) {
+        console.log(error);
+        res.send('수정 데이터 불러오기 실패');
+    }
+};
+
+exports.deleteCommunity = async (req, res) => {
+    try {
+        const result = await CommunitySchema.findByIdAndDelete(
+            req.body.communityId
+        );
+        console.log('삭제 결과', result);
+        res.send(result);
+    } catch (error) {
+        console.log('게시물 삭제 실패');
+        res.send('게시물 삭제 실패');
     }
 };

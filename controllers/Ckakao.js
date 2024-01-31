@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 const cookieConfig = {
-    maxAge: 60 * 60 * 1000, // 로그인 jwt쿠키 1시간 지속
+    maxAge: 12 * 60 * 60 * 1000, // 로그인 jwt쿠키 12시간 지속
 };
 
 async function call(method, uri, param, header) {
