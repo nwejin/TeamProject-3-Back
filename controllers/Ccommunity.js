@@ -152,12 +152,14 @@ exports.commentWrite = async (req, res) => {
 exports.commentRead = async (req, res) => {
     // // DB에서 데이터 가져오기
     const postId = req.query.postId;
+    console.log('postId', postId);
     try {
         const comment = await CommentSchema.find({ communityId: postId })
             .populate('userId', 'user_nickname user_profile')
             .sort({
                 date: -1,
             });
+        console.log('comment', comment);
         res.json(comment);
     } catch (err) {
         console.log(err);
