@@ -72,4 +72,6 @@ router.get('/update', Ccommunity.updateCommunity);
 // 커뮤니티 글 삭제
 router.post('/delete', Ccommunity.deleteCommunity);
 
+// 커뮤니티 글 검색 (제목 + 내용)
+router.get('/search', Ccommunity.searchCommunity);
 module.exports = router;
