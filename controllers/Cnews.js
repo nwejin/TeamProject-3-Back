@@ -1,3 +1,5 @@
+const { idText, identifierToKeywordKind } = require('typescript');
+const MyHighlightSchema = require('../models/MyHighlightSchema');
 const NewsSchema = require('../models/NewsSchema');
 const UserSchema = require('../models/UserSchema');
 const WordsSchema = require('../models/WordSchema');
@@ -355,13 +357,13 @@ exports.saveMyWord = async (req, res) => {
 exports.checkMyNews = async (req, res) => {
     try {
         const savedNews = req.query.data;
-        // console.log('뉴스체크',data);
+        console.log('뉴스체크',savedNews);
         const id = await tokenCheck(req);
 
         const user = await UserSchema.findOne({ user_id: id });
         if (user) {
             const saveCheck = user.news_bookmark.some(
-                (news) => news === savedNews._id
+                (news) => news.toString() === savedNews._id
             );
             if (saveCheck) {
                 res.json({ isSavedNews: saveCheck });
@@ -407,3 +409,31 @@ exports.saveMyNews = async (req, res) => {
     }
 };
 
+
+// ref, populate 테스트
+// exports.myHighlight = async (req, res) => { 
+//     try {
+//     // console.log('req.body >', req.body);
+//     // const highlightTxt = req.body.selectedText;
+//     const id = await tokenCheck(req);
+//     // console.log(id);
+//     const fromWordDb = await UserSchema.findOne({user_id: id}).populate('news_bookmark');
+//     console.log('---------------------',fromWordDb.news_bookmark);
+//     } catch(error) {
+//         console.error(error);
+//     }
+
+// }
+
+// 형광펜 텍스트 저장
+exports.myHighlight = async (req, res) => {
+    try {
+        console.log(req.body);
+        // const highlightTxt = req.body.selectedText;
+        // const id = await tokenCheck(req);
+
+        // const user = MyHighlightSchema.findOneAndUpdate({user_id: id}, )
+    } catch(error) {
+        console.error(error);
+    }
+}

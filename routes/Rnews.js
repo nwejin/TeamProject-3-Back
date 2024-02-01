@@ -29,4 +29,7 @@ router.post('/likedWords', Cnews.getMyWords);
 // 단어 좋아요 취소하기
 router.post('/deleteWords', Cnews.deleteMyWords);
 
+// 내 형광펜 단어 저장
+router.post('/myHighlight', Cnews.myHighlight);
+
 module.exports = router;
