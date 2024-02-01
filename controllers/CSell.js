@@ -101,10 +101,22 @@ exports.post_ProfitAndLoss = async (req, res) => {
 //모의투자 랭킹 보기 (전체 유저의 profit순으로 정렬 (win rate도 같이 보내기))
 exports.post_showRank = async (req, res) => {
     try {
-        console.log('show rank back >', req.body);
-    } catch (err) {}
+        let rank = []; //rank = 모든 사용자 {id, profit, win} 으로 구성
 
-    res.send({});
+        //profit, win으로 정렬 우선순위 설정
+        const allRank = await VirtualSchema.find().sort({
+            profit: -1,
+            win: -1,
+        }); //모든 사용자 기록
+
+        allRank.map((item) => {
+            const { userid, profit, win } = item;
+            rank.push({ userid, profit, win });
+        });
+        res.send({ rank: rank });
+    } catch (err) {
+        res.send(err);
+    }
 };
 
 // 클릭한 용어의 설명을 출력합니다.
