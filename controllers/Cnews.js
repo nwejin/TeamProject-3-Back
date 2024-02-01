@@ -234,7 +234,7 @@ exports.getWords = async (req, res) => {
 exports.getMainNews = async (req, res) => {
     try {
         const news = await NewsSchema.find().limit(2);
-        console.log(news);
+        // console.log(news);
         if (news.length === 0) {
             res.send({ success: false, msg: '등록된 뉴스가 없습니다.' });
         } else {
@@ -428,24 +428,13 @@ exports.myHighlight = async (req, res) => {
         const highlightTxt = req.body.selectedTxt;
         const id = await tokenCheck(req);
 
-        const userId = await UserSchema.findOne({
-            user_id: id,
-        });
-
-        if (!userId) {
-            return res.status(404).send('사용자 확인 불가');
-        }
-        const user_id = userId._id;
-
         // 형광펜 저장 텍스트 데이터가 있는 유저인지 구분
-        const saveUserCheck = await MyHighlightSchema.findOne({
-            user_id: user_id,
-        });
+        const saveUserCheck = await MyHighlightSchema.findOne({ user_id: id });
 
-        // 형광펜 저장 텍스트 데이터 있는 유저
+        // 형광펜 저장 텍스트 데이터 없는 유저
         if (!saveUserCheck) {
             await MyHighlightSchema.create({
-                user_id: user_id,
+                user_id: id,
                 highlight: [{ news_id: news_id, word: [highlightTxt] }],
             });
         } else {
@@ -465,6 +454,23 @@ exports.myHighlight = async (req, res) => {
             }
             await saveUserCheck.save();
         }
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+// 형광펜 텍스트 프론트로 전송
+exports.sendMyHighlight = async (req, res) => {
+    try {
+        // console.log('--------------', req.query);
+        const { news_id } = req.query;
+        const id = await tokenCheck(req);
+
+        const user = await MyHighlightSchema.findOne({ user_id: id });
+
+        const findHighlight = user.highlight.find((h) => h.news_id === news_id);
+
+        res.json(findHighlight);
     } catch (error) {
         console.error(error);
     }
