@@ -98,6 +98,15 @@ exports.post_ProfitAndLoss = async (req, res) => {
     res.send(true);
 };
 
+//모의투자 랭킹 보기 (전체 유저의 profit순으로 정렬 (win rate도 같이 보내기))
+exports.post_showRank = async (req, res) => {
+    try {
+        console.log('show rank back >', req.body);
+    } catch (err) {}
+
+    res.send({});
+};
+
 // 클릭한 용어의 설명을 출력합니다.
 exports.get_vocabulary = async (req, res) => {
     try {
