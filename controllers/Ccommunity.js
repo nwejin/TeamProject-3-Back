@@ -295,3 +295,20 @@ exports.deleteCommunity = async (req, res) => {
         res.send('게시물 삭제 실패');
     }
 };
+
+exports.searchCommunity = async (req, res) => {
+    try {
+        console.log('검색 단어', req.query.searchWord);
+        const regex = new RegExp(req.query.searchWord, 'i');
+        const searchResult = await CommunitySchema.find({
+            $or: [{ title: regex }, { content: regex }],
+        }).sort({
+            date: -1,
+        });
+        console.log('검색 결과', searchResult);
+        res.send(searchResult);
+    } catch (error) {
+        console.log('게시물 DB 검색 실패', error);
+        res.send('게시물 DB 검색 실패');
+    }
+};
