@@ -60,7 +60,7 @@ exports.communityWrite = async (req, res) => {
     }
 };
 
-// 2. 저장된 값 불러와서 메인 커뮤니티 화면에  보내주기 (최신순으로)
+// 2. 저장된 값 불러와서 메인 커뮤니티 화면에 보내주기 (최신순으로)
 exports.communityRead = async (req, res) => {
     // DB에서 데이터 가져오기
     try {
@@ -235,7 +235,15 @@ exports.replyRead = async (req, res) => {
 
 exports.getMainBoards = async (req, res) => {
     try {
-        const board = await CommunitySchema.find().limit(10).sort({ date: -1 });
+        const board = await CommunitySchema.find()
+
+            .populate('userId', 'user_nickname user_profile')
+            .sort({
+                // 내림차순
+                date: -1,
+            })
+            .limit(10);
+
         if (board.length === 0) {
             res.send({ success: false, msg: '등록한 글이 없습니다.' });
         } else {
