@@ -294,7 +294,6 @@ exports.deleteMyWords = async (req, res) => {
     }
 };
 
-
 // ------------------------------------------------------------------
 
 // 기존에 하트 누른 단어인지 검사
@@ -346,7 +345,6 @@ exports.saveMyWord = async (req, res) => {
                 success: false,
                 message: '사용자를 찾을 수 없음',
             });
-
         }
     } catch (error) {
         console.error(error);
@@ -357,7 +355,7 @@ exports.saveMyWord = async (req, res) => {
 exports.checkMyNews = async (req, res) => {
     try {
         const savedNews = req.query.data;
-        console.log('뉴스체크',savedNews);
+        // console.log('뉴스체크',savedNews);
         const id = await tokenCheck(req);
 
         const user = await UserSchema.findOne({ user_id: id });
@@ -375,7 +373,6 @@ exports.checkMyNews = async (req, res) => {
         console.error(error);
     }
 };
-
 
 // news 저장
 exports.saveMyNews = async (req, res) => {
@@ -397,7 +394,7 @@ exports.saveMyNews = async (req, res) => {
                 user.news_bookmark.pop(savedNews._id);
                 await user.save();
             }
-            res.status(200).json({ success: true, message: '단어 저장 성공!' });
+            res.status(200).json({ success: true, message: '뉴스 저장 성공!' });
         } else {
             res.status(404).json({
                 success: false,
@@ -409,9 +406,8 @@ exports.saveMyNews = async (req, res) => {
     }
 };
 
-
 // ref, populate 테스트
-// exports.myHighlight = async (req, res) => { 
+// exports.myHighlight = async (req, res) => {
 //     try {
 //     // console.log('req.body >', req.body);
 //     // const highlightTxt = req.body.selectedText;
@@ -428,12 +424,48 @@ exports.saveMyNews = async (req, res) => {
 // 형광펜 텍스트 저장
 exports.myHighlight = async (req, res) => {
     try {
-        console.log(req.body);
-        // const highlightTxt = req.body.selectedText;
-        // const id = await tokenCheck(req);
+        const news_id = req.body.news_id;
+        const highlightTxt = req.body.selectedTxt;
+        const id = await tokenCheck(req);
 
-        // const user = MyHighlightSchema.findOneAndUpdate({user_id: id}, )
-    } catch(error) {
+        const userId = await UserSchema.findOne({
+            user_id: id,
+        });
+
+        if (!userId) {
+            return res.status(404).send('사용자 확인 불가');
+        }
+        const user_id = userId._id;
+
+        // 형광펜 저장 텍스트 데이터가 있는 유저인지 구분
+        const saveUserCheck = await MyHighlightSchema.findOne({
+            user_id: user_id,
+        });
+
+        // 형광펜 저장 텍스트 데이터 있는 유저
+        if (!saveUserCheck) {
+            await MyHighlightSchema.create({
+                user_id: user_id,
+                highlight: [{ news_id: news_id, word: [highlightTxt] }],
+            });
+        } else {
+            // 형광펜 저장 텍스트가 있지만 어떤 뉴스에 형광펜을 했는지 구분
+            const existingHighlight = saveUserCheck.highlight.find(
+                (h) => h.news_id === news_id
+            );
+
+            if (existingHighlight) {
+                existingHighlight.word.push(highlightTxt);
+            } else {
+                // 해당 news_id에 대한 하이라이트가 없는 경우 새로운 하이라이트 객체 추가
+                saveUserCheck.highlight.push({
+                    news_id: news_id,
+                    word: [highlightTxt],
+                });
+            }
+            await saveUserCheck.save();
+        }
+    } catch (error) {
         console.error(error);
     }
-}
+};
