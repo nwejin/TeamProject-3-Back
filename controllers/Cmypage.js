@@ -3,6 +3,7 @@ const CommentSchema = require('../models/CommentSchema');
 const CommunitySchema = require('../models/CommunitySchema');
 const MyHighlightSchema = require('../models/MyHighlightSchema');
 const ReCommentSchema = require('../models/ReCommentSchema');
+const VirtualSchema = require('../models/VirtualSchema');
 
 const { tokenCheck } = require('../utils/tokenCheck');
 const bcrypt = require('bcrypt');
@@ -147,7 +148,7 @@ exports.deleteUserinfo = async (req, res) => {
         }
         try {
             const result = await MyHighlightSchema.findOneAndDelete({
-                user_id: deleteUser.user_nickname,
+                user_id: deleteUser.user_id,
             });
             console.log('하이라이트 삭제', result);
         } catch (error) {
@@ -160,6 +161,14 @@ exports.deleteUserinfo = async (req, res) => {
             console.log('대댓글 삭제', result);
         } catch (error) {
             console.log('대댓글 삭제 에러');
+        }
+        try {
+            const result = await VirtualSchema.deleteMany({
+                userid: deleteUser.user_id,
+            });
+            console.log('모의투자 사용자 기록 삭제', result);
+        } catch (error) {
+            console.log('모의투자 사용자 기록 에러');
         }
 
         console.log(deleteUser);
