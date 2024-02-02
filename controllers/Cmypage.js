@@ -1,4 +1,9 @@
 const UserSchema = require('../models/UserSchema');
+const CommentSchema = require('../models/CommentSchema');
+const CommunitySchema = require('../models/CommunitySchema');
+const MyHighlightSchema = require('../models/MyHighlightSchema');
+const ReCommentSchema = require('../models/ReCommentSchema');
+
 const { tokenCheck } = require('../utils/tokenCheck');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
@@ -117,13 +122,48 @@ exports.modifyUserInfo = async (req, res) => {
     }
 };
 exports.deleteUserinfo = async (req, res) => {
-    const currentUserId = req.body.currentUserId;
+    const userId = req.body.currentUserId;
     try {
-        console.log('현재 사용자 아이디', currentUserId);
-        const deleteUser = await UserSchema.deleteOne({
-            user_id: currentUserId,
+        console.log('현재 사용자 아이디', userId);
+        const deleteUser = await UserSchema.findOneAndDelete({
+            user_id: userId,
         });
+        console.log('삭제된 사용자 정보', deleteUser);
+        try {
+            const result = await CommentSchema.deleteMany({
+                userId: deleteUser._id,
+            });
+            console.log('댓글 삭제', result);
+        } catch (error) {
+            console.log('댓글 삭제 에러', error);
+        }
+        try {
+            const result = await CommunitySchema.deleteMany({
+                userId: deleteUser._id,
+            });
+            console.log('글 삭제', result);
+        } catch (error) {
+            console.log('글 삭제 에러');
+        }
+        try {
+            const result = await MyHighlightSchema.findOneAndDelete({
+                user_id: deleteUser.user_nickname,
+            });
+            console.log('하이라이트 삭제', result);
+        } catch (error) {
+            console.log('하이라이트 단어 삭제 에러');
+        }
+        try {
+            const result = await ReCommentSchema.deleteMany({
+                userId: deleteUser._id,
+            });
+            console.log('대댓글 삭제', result);
+        } catch (error) {
+            console.log('대댓글 삭제 에러');
+        }
+
         console.log(deleteUser);
+
         res.send({
             success: true,
             message: '회원정보 DB 삭제 완료',
