@@ -304,9 +304,11 @@ exports.searchCommunity = async (req, res) => {
         const regex = new RegExp(req.query.searchWord, 'i');
         const searchResult = await CommunitySchema.find({
             $or: [{ title: regex }, { content: regex }],
-        }).sort({
-            date: -1,
-        });
+        })
+            .populate('userId', 'user_nickname user_profile')
+            .sort({
+                date: -1,
+            });
         console.log('검색 결과', searchResult);
         res.send(searchResult);
     } catch (error) {
