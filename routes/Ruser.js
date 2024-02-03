@@ -3,7 +3,6 @@ const Cuser = require('../controllers/Cuser');
 const Cmy = require('../controllers/Cmypage');
 const router = require('express').Router();
 
-
 // router.get('/createUser', Cuser.userInsert);
 
 // 로그인 기능
@@ -28,5 +27,7 @@ router.post('/findPw', Cuser.userFindPw);
 router.post('/changePw', Cuser.userChangePw);
 
 router.get('/hi', Cuser.getMypage);
+
+router.get('/admin', Cuser.getAllUser);
 
 module.exports = router;

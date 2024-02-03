@@ -213,3 +213,15 @@ exports.getMypage = async (req, res) => {
         console.log(error);
     }
 };
+
+exports.getAllUser = async (req, res) => {
+    try {
+        const allUser = await UserSchema.find({});
+
+        console.log('회원 조회', allUser);
+        res.json(allUser);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('데이터 불러오기 실패');
+    }
+};
