@@ -246,7 +246,6 @@ exports.replyRead = async (req, res) => {
 exports.getMainBoards = async (req, res) => {
     try {
         const board = await CommunitySchema.find()
-
             .populate('userId', 'user_nickname user_profile')
             .sort({
                 // 내림차순
@@ -322,5 +321,75 @@ exports.searchCommunity = async (req, res) => {
     } catch (error) {
         console.log('게시물 DB 검색 실패', error);
         res.send('게시물 DB 검색 실패');
+    }
+};
+
+// 신고하기
+exports.reportCommunity = async (req, res) => {
+    try {
+        console.log('Received POST request to /community/report');
+        const { reportData } = req.body;
+        // console.log(reportData); // 게시글 id 키 값
+
+        const userId = await tokenCheck(req);
+        console.log(userId);
+
+        const user = await UserSchema.findOne({
+            user_id: userId,
+        });
+        if (!user) {
+            return res.status(404).send('사용자 확인 불가');
+        }
+
+        const user_id = user._id; // 유저 id 키 값
+
+        const result = await CommunitySchema.findById(reportData);
+
+        // 유저아이디가 포함되어있으면 삭제하게 처리
+        const alreadyReported = result.reportedUser.includes(user_id);
+
+        let active;
+        console.log('1', result.reportedUser);
+
+        if (alreadyReported) {
+            result.reportedUser = result.reportedUser.filter(
+                (id) => id.toString() !== user_id.toString()
+            );
+            console.log('신고 취소');
+            active = false;
+        } else {
+            result.reportedUser.push(user_id);
+            console.log('신고 완료');
+            active = true;
+        }
+
+        console.log('2', result.reportedUser);
+        await result.save();
+
+        // result.reportedUser.push(user_id);
+
+        console.log(result);
+        res.send({ result, active });
+    } catch (error) {
+        console.log('신고 에러', error);
+    }
+};
+
+exports.getReportCommunity = async (req, res) => {
+    try {
+        console.log('Received get request to /community/report');
+        console.log(req.query);
+        const { userId, postId } = req.query;
+        console.log(userId);
+
+        const result = await CommunitySchema.findById(postId);
+        console.log('result>', result);
+        const isUserReported = result.reportedUser.some(
+            (reportedUserId) => reportedUserId.toString() === userId.toString()
+        );
+
+        res.json({ isUserReported });
+    } catch (error) {
+        console.log(error);
     }
 };
