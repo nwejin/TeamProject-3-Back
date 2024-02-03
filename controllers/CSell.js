@@ -116,7 +116,7 @@ exports.post_showRank = async (req, res) => {
         const allRank = await VirtualSchema.find().sort({
             profit: -1,
             win: -1,
-        }); //모든 사용자 기록
+        }); //모든 사용자 기록..
 
         allRank.map((item) => {
             const { userid, profit, win } = item;
