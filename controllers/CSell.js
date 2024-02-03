@@ -111,6 +111,7 @@ exports.post_showRank = async (req, res) => {
             return res.status(404).send('사용자 확인 불가');
         }
         const profile = user.user_profile;
+        console.log(profile);
 
         //profit, win으로 정렬 우선순위 설정
         const allRank = await VirtualSchema.find().sort({
