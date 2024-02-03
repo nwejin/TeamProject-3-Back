@@ -102,16 +102,13 @@ exports.post_ProfitAndLoss = async (req, res) => {
 exports.post_showRank = async (req, res) => {
     try {
         let rank = []; //rank = 모든 사용자 {id, profit, win, objectId.user_profile} 으로 구성
+        let profileValue = []; //{key: userid, value : profile 주소}
         const userId = await tokenCheck(req);
 
-        const user = await UserSchema.findOne({
-            user_id: userId,
-        });
+        const user = await UserSchema.find({});
         if (!user) {
             return res.status(404).send('사용자 확인 불가');
         }
-        const profile = user.user_profile;
-        console.log(profile);
 
         //profit, win으로 정렬 우선순위 설정
         const allRank = await VirtualSchema.find().sort({
@@ -121,10 +118,15 @@ exports.post_showRank = async (req, res) => {
 
         allRank.map((item) => {
             const { userid, profit, win } = item;
-            rank.push({ userid, profit, win, profile });
+            for (let i = 0; i < profileValue.length; i++) {
+                let profile = profileValue[i].profile;
+                if (userid === profileValue[i].userid) {
+                    rank.push({ userid, profit, win, profile });
+                }
+            }
         });
 
-        console.log('rank  randk dkdanknjbn> ', rank);
+        //console.log('rank  randk dkdanknjbn> ', rank);
 
         res.send({ rank: rank });
     } catch (err) {
