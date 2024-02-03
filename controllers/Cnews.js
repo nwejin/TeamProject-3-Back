@@ -500,10 +500,12 @@ exports.getHighlight = async (req, res) => {
         const user = await MyHighlightSchema.findOne({ user_id: id });
         // console.log('------------------', user);
         if (user) {
+            // news_id가 일치하는 데이터 객체 찾기
+
             const findHighlight = user.highlight.find(
                 (h) => h.news_id === news_id
             );
-            console.log('-------', findHighlight);
+            // console.log('-------', findHighlight);
             if (findHighlight) {
                 res.json({ available: true, highlight: findHighlight });
             }
