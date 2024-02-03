@@ -123,7 +123,7 @@ exports.post_showRank = async (req, res) => {
             rank.push({ userid, profit, win, profile });
         });
 
-        console.log('rank > ', rank);
+        console.log('rank  randk dkdanknjbn> ', rank);
 
         res.send({ rank: rank });
     } catch (err) {
