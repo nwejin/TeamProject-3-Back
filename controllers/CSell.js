@@ -103,6 +103,10 @@ exports.post_showRank = async (req, res) => {
     try {
         let rank = []; //rank = 모든 사용자 {id, profit, win} 으로 구성
 
+        // const user_nickname = userid;
+        // const user = await UserSchema.findOne({ user_nickname });
+        // console.log;
+
         //profit, win으로 정렬 우선순위 설정
         const allRank = await VirtualSchema.find().sort({
             profit: -1,
@@ -113,6 +117,7 @@ exports.post_showRank = async (req, res) => {
             const { userid, profit, win } = item;
             rank.push({ userid, profit, win });
         });
+
         res.send({ rank: rank });
     } catch (err) {
         res.send(err);
