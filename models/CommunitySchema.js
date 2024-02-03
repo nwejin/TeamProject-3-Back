@@ -41,6 +41,16 @@ const CommunitySchema = new Schema(
         image: {
             type: String,
         },
+        reportContent: {
+            type: Number,
+            default: 0,
+        },
+        reportedUser: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User',
+            },
+        ],
     }
     // , {
     //     timestamps: true,
