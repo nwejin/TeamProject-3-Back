@@ -109,12 +109,6 @@ exports.post_showRank = async (req, res) => {
         if (!user) {
             return res.status(404).send('사용자 확인 불가');
         }
-        //본인 로그인 한 이미지만 들어감
-        user.map((item) => {
-            const userid = item.user_id;
-            const profile = item.user_profile;
-            profileValue.push({ userid, profile });
-        });
 
         //profit, win으로 정렬 우선순위 설정
         const allRank = await VirtualSchema.find().sort({
