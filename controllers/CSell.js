@@ -1,5 +1,6 @@
 const VirtualSchema = require('../models/VirtualSchema');
 const StockWordSchema = require('../models/StockWordSchema');
+const UserSchema = require('../models/UserSchema');
 const { tokenCheck } = require('../utils/tokenCheck');
 
 exports.post_profit = async (req, res) => {
@@ -100,11 +101,16 @@ exports.post_ProfitAndLoss = async (req, res) => {
 //모의투자 랭킹 보기 (전체 유저의 profit순으로 정렬 (win rate도 같이 보내기))
 exports.post_showRank = async (req, res) => {
     try {
-        let rank = []; //rank = 모든 사용자 {id, profit, win} 으로 구성
+        let rank = []; //rank = 모든 사용자 {id, profit, win, objectId.user_profile} 으로 구성
+        const userId = await tokenCheck(req);
 
-        // const user_nickname = userid;
-        // const user = await UserSchema.findOne({ user_nickname });
-        // console.log;
+        const user = await UserSchema.findOne({
+            user_id: userId,
+        });
+        if (!user) {
+            return res.status(404).send('사용자 확인 불가');
+        }
+        const profile = user.user_profile;
 
         //profit, win으로 정렬 우선순위 설정
         const allRank = await VirtualSchema.find().sort({
@@ -114,8 +120,10 @@ exports.post_showRank = async (req, res) => {
 
         allRank.map((item) => {
             const { userid, profit, win } = item;
-            rank.push({ userid, profit, win });
+            rank.push({ userid, profit, win, profile });
         });
+
+        console.log('rank > ', rank);
 
         res.send({ rank: rank });
     } catch (err) {
