@@ -219,18 +219,7 @@ exports.getEconomyNews = async (req, res) => {
 
 // ------------------------------------------------------------------
 
-// Db에서 newsDetail로 단어 전송
-exports.getWords = async (req, res) => {
-    try {
-        const words = await WordsSchema.find();
-        // console.log(words);
-        res.json(words);
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-// 메이페이지 뉴스 2개 가져오기
+// 메인페이지 뉴스 2개 가져오기
 exports.getMainNews = async (req, res) => {
     try {
         const news = await NewsSchema.find().limit(2);
@@ -244,6 +233,9 @@ exports.getMainNews = async (req, res) => {
         console.log(error);
     }
 };
+
+// ------------------------------------------------------------------
+// 마이페이지
 
 // 유저가 좋아요한 단어 가져오기
 exports.getMyWords = async (req, res) => {
@@ -294,7 +286,40 @@ exports.deleteMyWords = async (req, res) => {
     }
 };
 
+// 유저가 저장한 뉴스
+exports.getMyNews = async (req, res) => {
+    try {
+        const user_id = await tokenCheck(req);
+        console.log(user_id);
+
+        const user = await UserSchema.findOne({ user_id }).populate(
+            'news_bookmark'
+        );
+        // console.log(user);
+        const savedNews = user.news_bookmark;
+        // console.log('---------', savedNews);
+        if (savedNews) {
+            res.json({ success: true, news: savedNews });
+        } else {
+            res.json({ success: false });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
+
 // ------------------------------------------------------------------
+
+// Db에서 newsDetail로 단어 전송
+exports.getWordsDb = async (req, res) => {
+    try {
+        const words = await WordsSchema.find();
+        // console.log(words);
+        res.json(words);
+    } catch (error) {
+        console.error(error);
+    }
+};
 
 // 기존에 하트 누른 단어인지 검사
 exports.checkMyWord = async (req, res) => {
@@ -336,7 +361,7 @@ exports.saveMyWord = async (req, res) => {
                 user.word_bookmark.push(modalWord);
                 await user.save();
             } else {
-                user.word_bookmark.pop(modalWord);
+                user.word_bookmark.pull(modalWord);
                 await user.save();
             }
             res.status(200).json({ success: true, message: '단어 저장 성공!' });
@@ -385,13 +410,13 @@ exports.saveMyNews = async (req, res) => {
         const user = await UserSchema.findOne({ user_id: id });
         if (user) {
             const duplicateCheck = user.news_bookmark.some(
-                (news) => news === savedNews._id
+                (news) => news.toString() === savedNews._id
             );
             if (!duplicateCheck) {
                 user.news_bookmark.push(savedNews._id);
                 await user.save();
             } else {
-                user.news_bookmark.pop(savedNews._id);
+                user.news_bookmark.pull(savedNews._id);
                 await user.save();
             }
             res.status(200).json({ success: true, message: '뉴스 저장 성공!' });
@@ -424,8 +449,9 @@ exports.saveMyNews = async (req, res) => {
 // 형광펜 텍스트 저장
 exports.myHighlight = async (req, res) => {
     try {
-        const news_id = req.body.news_id;
-        const highlightTxt = req.body.selectedTxt;
+        // console.log(req.body);
+        const { news_id, selectedTxt } = req.body;
+        // const highlightTxt = req.body.selectedTxt;
         const id = await tokenCheck(req);
 
         // 형광펜 저장 텍스트 데이터가 있는 유저인지 구분
@@ -435,7 +461,12 @@ exports.myHighlight = async (req, res) => {
         if (!saveUserCheck) {
             await MyHighlightSchema.create({
                 user_id: id,
-                highlight: [{ news_id: news_id, word: [highlightTxt] }],
+                highlight: [
+                    {
+                        news_id: news_id,
+                        word: [selectedTxt],
+                    },
+                ],
             });
         } else {
             // 형광펜 저장 텍스트가 있지만 어떤 뉴스에 형광펜을 했는지 구분
@@ -444,12 +475,12 @@ exports.myHighlight = async (req, res) => {
             );
 
             if (existingHighlight) {
-                existingHighlight.word.push(highlightTxt);
+                existingHighlight.word.push(selectedTxt);
             } else {
                 // 해당 news_id에 대한 하이라이트가 없는 경우 새로운 하이라이트 객체 추가
                 saveUserCheck.highlight.push({
                     news_id: news_id,
-                    word: [highlightTxt],
+                    word: [selectedTxt],
                 });
             }
             await saveUserCheck.save();
@@ -460,17 +491,60 @@ exports.myHighlight = async (req, res) => {
 };
 
 // 형광펜 텍스트 프론트로 전송
-exports.sendMyHighlight = async (req, res) => {
+exports.getHighlight = async (req, res) => {
     try {
         // console.log('--------------', req.query);
         const { news_id } = req.query;
         const id = await tokenCheck(req);
 
         const user = await MyHighlightSchema.findOne({ user_id: id });
+        // console.log('------------------', user);
+        if (user) {
+            const findHighlight = user.highlight.find(
+                (h) => h.news_id === news_id
+            );
+            console.log('-------', findHighlight);
+            if (findHighlight) {
+                res.json({ available: true, highlight: findHighlight });
+            }
+            // else {
+            //     res.json({ available: false });
+            // }
+        } else {
+            res.json({ available: false });
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
 
-        const findHighlight = user.highlight.find((h) => h.news_id === news_id);
+// 형광펜 삭제
+exports.deleteHighlight = async (req, res) => {
+    try {
+        // console.log(req.body);
+        const { news_id, highlightTxt } = req.body;
+        const user_id = await tokenCheck(req);
 
-        res.json(findHighlight);
+        // const user = await MyHighlightSchema.findOne({ user_id });
+
+        // const findNewsid = user.highlight.find((h) => h.news_id === news_id);
+        // // console.log('-----!!!', findNewsid);
+        // const findHighlightWord = findNewsid.word;
+        // console.log('--------!', findHighlightWord);
+
+        // MongoDB에서 해당 값을 pull하여 삭제
+        const deleteTxt = await MyHighlightSchema.updateOne(
+            { user_id, 'highlight.news_id': news_id },
+            { $pull: { 'highlight.$.word': highlightTxt } }
+        );
+        if (deleteTxt.modifiedCount === 1) {
+            res.json({ success: true, msg: '하이라이트 삭제 완료' });
+        } else {
+            res.json({
+                success: false,
+                msg: '해당하는 하이라이트를 찾을 수 없습니다.',
+            });
+        }
     } catch (error) {
         console.error(error);
     }
