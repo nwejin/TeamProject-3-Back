@@ -179,6 +179,7 @@ exports.communityRank = async (req, res) => {
     // DB에서 데이터 가져오기
     try {
         const rankPosts = await CommunitySchema.find()
+            .populate('userId', 'user_nickname user_profile')
             .sort({
                 like: -1,
             })
