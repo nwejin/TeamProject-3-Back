@@ -2,7 +2,6 @@ const VirtualSchema = require('../models/VirtualSchema');
 const StockWordSchema = require('../models/StockWordSchema');
 const { tokenCheck } = require('../utils/tokenCheck');
 
-// 수익, 이긴 횟수, 진 횟수를 모두 저장합니다.
 exports.post_profit = async (req, res) => {
     const { profit } = req.body;
     const { jwtCookie } = req.cookies; // 비로그인 시 savedId만 전달 -> 로그인 시 savedId + jwtCookie 전달

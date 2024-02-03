@@ -70,7 +70,7 @@ exports.communityRead = async (req, res) => {
                 // 내림차순
                 date: -1,
             });
-        // console.log(communityPosts);
+        console.log('communityPosts' > communityPosts);
         res.json(communityPosts);
     } catch (err) {
         console.log(err);
@@ -83,7 +83,6 @@ exports.communityLike = async (req, res) => {
     try {
         console.log('Received POST request to /community/like');
         const userId = await tokenCheck(req);
-        // console.log(userId);
 
         // 어떤 유저가 좋아요 했는지 확인
         const user = await UserSchema.findOne({
@@ -92,25 +91,35 @@ exports.communityLike = async (req, res) => {
         if (!user) {
             return res.status(404).send('사용자 확인 불가');
         }
-        // console.log('req.body.postId>', req.body.postId); // 게시글 아이디
-        // console.log('req.body.like>', req.body.like); // 1 (좋아요)
 
         // 커뮤니티에서 id로 게시글 찾기
         const community = await CommunitySchema.findOne({
             _id: req.body.postId || req.body.data._id,
         });
-        // console.log(community);
+
         if (community) {
-            if (community.likedUser.includes(user._id)) {
-                return res.send('이미 좋아요를 눌렀음');
+            const userIndex = community.likedUser.indexOf(user._id);
+
+            if (userIndex !== -1) {
+                // 이미 좋아요를 누른 경우, 좋아요 취소
+                community.like -= req.body.like; // 필요없음
+                community.likedUser.splice(userIndex, 1);
+                await community.save();
+
+                // 좋아요 취소 후의 게시글 데이터를 반환
+                return res.json(community);
+            } else {
+                // 좋아요를 누르지 않은 경우, 좋아요 추가
+                community.like += req.body.like; //얘도
+                community.likedUser.push(user._id);
+                await community.save();
+
+                // 좋아요 완료 후의 게시글 데이터를 반환
+                return res.json(community);
             }
+        } else {
+            return res.status(404).send('게시글 확인 불가');
         }
-
-        community.like += req.body.like;
-        community.likedUser.push(user._id);
-        await community.save();
-
-        res.send('좋아요 완료');
     } catch (err) {
         console.log(err);
         res.status(500).send('좋아요 오류 ');
@@ -152,14 +161,12 @@ exports.commentWrite = async (req, res) => {
 exports.commentRead = async (req, res) => {
     // // DB에서 데이터 가져오기
     const postId = req.query.postId;
-    console.log('postId', postId);
     try {
         const comment = await CommentSchema.find({ communityId: postId })
             .populate('userId', 'user_nickname user_profile')
             .sort({
                 date: -1,
             });
-        console.log('comment', comment);
         res.json(comment);
     } catch (err) {
         console.log(err);
