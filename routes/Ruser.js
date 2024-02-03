@@ -29,5 +29,6 @@ router.post('/changePw', Cuser.userChangePw);
 router.get('/hi', Cuser.getMypage);
 
 router.get('/admin', Cuser.getAllUser);
+router.get('/admin/communityManage', Cuser.getReportPost);
 
 module.exports = router;

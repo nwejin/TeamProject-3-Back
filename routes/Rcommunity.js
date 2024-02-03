@@ -74,4 +74,9 @@ router.post('/delete', Ccommunity.deleteCommunity);
 
 // 커뮤니티 글 검색 (제목 + 내용)
 router.get('/search', Ccommunity.searchCommunity);
+
+// 신고하기
+router.post('/report', Ccommunity.reportCommunity);
+router.get('/report', Ccommunity.getReportCommunity);
+
 module.exports = router;

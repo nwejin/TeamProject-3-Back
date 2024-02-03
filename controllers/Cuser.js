@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const UserSchema = require('../models/UserSchema');
 const StockWordSchema = require('../models/StockWordSchema');
 const { tokenCheck } = require('../utils/tokenCheck');
+const CommunitySchema = require('../models/CommunitySchema');
 // const WordSchema = require("../models/WordSchema");
 require('dotenv').config();
 const jwtSecret = process.env.JWTSECRET;
@@ -214,12 +215,26 @@ exports.getMypage = async (req, res) => {
     }
 };
 
+// 관리자 페이지 유저 가져오기
 exports.getAllUser = async (req, res) => {
     try {
         const allUser = await UserSchema.find({});
 
         console.log('회원 조회', allUser);
         res.json(allUser);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('데이터 불러오기 실패');
+    }
+};
+
+// 관리자 페이지 신고글 가져오기
+exports.getReportPost = async (req, res) => {
+    try {
+        const reportPost = await CommunitySchema.find({
+            reportedUser: { $exists: true, $not: { $size: 0 } },
+        }).populate('userId', 'user_nickname user_profile');
+        res.json(reportPost);
     } catch (err) {
         console.log(err);
         res.status(500).send('데이터 불러오기 실패');
