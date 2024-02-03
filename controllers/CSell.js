@@ -126,7 +126,7 @@ exports.post_showRank = async (req, res) => {
             }
         });
 
-        //console.log('rank  randk dkdanknjbn> ', rank);
+        console.log('rank  randk dkdanknjbn> ', rank);
 
         res.send({ rank: rank });
     } catch (err) {
