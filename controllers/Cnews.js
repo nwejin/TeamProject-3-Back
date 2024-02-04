@@ -405,7 +405,6 @@ exports.saveMyNews = async (req, res) => {
         // console.log(req.body);
         const savedNews = req.body.data;
         const id = await tokenCheck(req);
-        // console.log(id);
 
         const user = await UserSchema.findOne({ user_id: id });
         if (user) {
@@ -431,21 +430,6 @@ exports.saveMyNews = async (req, res) => {
     }
 };
 
-// ref, populate 테스트
-// exports.myHighlight = async (req, res) => {
-//     try {
-//     // console.log('req.body >', req.body);
-//     // const highlightTxt = req.body.selectedText;
-//     const id = await tokenCheck(req);
-//     // console.log(id);
-//     const fromWordDb = await UserSchema.findOne({user_id: id}).populate('news_bookmark');
-//     console.log('---------------------',fromWordDb.news_bookmark);
-//     } catch(error) {
-//         console.error(error);
-//     }
-
-// }
-
 // 형광펜 텍스트 저장
 exports.myHighlight = async (req, res) => {
     try {
@@ -469,7 +453,7 @@ exports.myHighlight = async (req, res) => {
                 ],
             });
         } else {
-            // 형광펜 저장 텍스트가 있지만 어떤 뉴스에 형광펜을 했는지 구분
+            // 형광펜 저장 텍스트가 있다면 어떤 뉴스에 형광펜을 했는지 구분
             const existingHighlight = saveUserCheck.highlight.find(
                 (h) => h.news_id === news_id
             );
@@ -501,17 +485,15 @@ exports.getHighlight = async (req, res) => {
         // console.log('------------------', user);
         if (user) {
             // news_id가 일치하는 데이터 객체 찾기
-
             const findHighlight = user.highlight.find(
                 (h) => h.news_id === news_id
             );
             // console.log('-------', findHighlight);
             if (findHighlight) {
                 res.json({ available: true, highlight: findHighlight });
+            } else {
+                res.json({ available: false });
             }
-            // else {
-            //     res.json({ available: false });
-            // }
         } else {
             res.json({ available: false });
         }
@@ -527,25 +509,49 @@ exports.deleteHighlight = async (req, res) => {
         const { news_id, highlightTxt } = req.body;
         const user_id = await tokenCheck(req);
 
-        // const user = await MyHighlightSchema.findOne({ user_id });
+        const user = await MyHighlightSchema.findOne({ user_id });
 
-        // const findNewsid = user.highlight.find((h) => h.news_id === news_id);
-        // // console.log('-----!!!', findNewsid);
-        // const findHighlightWord = findNewsid.word;
-        // console.log('--------!', findHighlightWord);
+        const findNewsid = user.highlight.find((h) => h.news_id === news_id);
+        // console.log('-----!!!', findNewsid);
+        //     news_id: '65b85778fa8f6cc76f570baa',
+        //     word: [ '전문기업 CJ' ],
+        //     _id: new ObjectId('65bdf21b49b9eb0d24b3f501')
+        //   }
+        const findHighlightWord = findNewsid.word;
+        // console.log('--------!', findHighlightWord[0]);
 
-        // MongoDB에서 해당 값을 pull하여 삭제
-        const deleteTxt = await MyHighlightSchema.updateOne(
-            { user_id, 'highlight.news_id': news_id },
-            { $pull: { 'highlight.$.word': highlightTxt } }
-        );
-        if (deleteTxt.modifiedCount === 1) {
-            res.json({ success: true, msg: '하이라이트 삭제 완료' });
+        // findHighlightWord 배열의 길이가 1이고, highlightTxt와 일치하면 해당 객체 삭제
+        if (
+            findHighlightWord.length === 1 &&
+            highlightTxt === findHighlightWord[0]
+        ) {
+            const deleteObj = await MyHighlightSchema.updateOne(
+                { user_id },
+                { $pull: { highlight: { news_id } } }
+            );
+            // console.log('=======', deleteObj);
+            if (deleteObj.modifiedCount === 1) {
+                res.json({ success: true, msg: '하이라이트 삭제 완료' });
+            } else {
+                res.json({
+                    success: false,
+                    msg: '해당하는 하이라이트를 찾을 수 없습니다.',
+                });
+            }
         } else {
-            res.json({
-                success: false,
-                msg: '해당하는 하이라이트를 찾을 수 없습니다.',
-            });
+            // MongoDB에서 해당 값을 pull하여 삭제
+            const deleteTxt = await MyHighlightSchema.updateOne(
+                { user_id, 'highlight.news_id': news_id },
+                { $pull: { 'highlight.$.word': highlightTxt } }
+            );
+            if (deleteTxt.modifiedCount === 1) {
+                res.json({ success: true, msg: '하이라이트 삭제 완료' });
+            } else {
+                res.json({
+                    success: false,
+                    msg: '해당하는 하이라이트를 찾을 수 없습니다.',
+                });
+            }
         }
     } catch (error) {
         console.error(error);
