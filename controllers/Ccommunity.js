@@ -91,10 +91,10 @@ exports.communityLike = async (req, res) => {
         if (!user) {
             return res.status(404).send('사용자 확인 불가');
         }
-
+        console.log(req.body);
         // 커뮤니티에서 id로 게시글 찾기
         const community = await CommunitySchema.findOne({
-            _id: req.body.postId || req.body.data._id,
+            _id: req.body.postId || req.body.data._id || req.body.postData._id,
         });
 
         if (community) {
@@ -102,7 +102,6 @@ exports.communityLike = async (req, res) => {
 
             if (userIndex !== -1) {
                 // 이미 좋아요를 누른 경우, 좋아요 취소
-                community.like -= req.body.like; // 필요없음
                 community.likedUser.splice(userIndex, 1);
                 await community.save();
 
@@ -110,7 +109,6 @@ exports.communityLike = async (req, res) => {
                 return res.json(community);
             } else {
                 // 좋아요를 누르지 않은 경우, 좋아요 추가
-                community.like += req.body.like; //얘도
                 community.likedUser.push(user._id);
                 await community.save();
 
@@ -389,6 +387,29 @@ exports.getReportCommunity = async (req, res) => {
         );
 
         res.json({ isUserReported });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+exports.communityGetLike = async (req, res) => {
+    try {
+        console.log('Received get request to /community/like');
+        console.log(req.query);
+        const { userId, postId } = req.query;
+        console.log(userId);
+
+        const result = await CommunitySchema.findById(postId);
+        // console.log('result>', result);
+
+        const like = result.likedUser.length;
+        // console.log('like', like);
+
+        const isUserliked = result.likedUser.some(
+            (likeudUserId) => likeudUserId.toString() === userId.toString()
+        );
+
+        res.json({ isUserliked, like });
     } catch (error) {
         console.log(error);
     }
