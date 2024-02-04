@@ -379,14 +379,14 @@ exports.saveMyWord = async (req, res) => {
 // news 저장 유무 확인
 exports.checkMyNews = async (req, res) => {
     try {
-        const savedNews = req.query.data;
-        // console.log('뉴스체크',savedNews);
+        const savedNews = req.query.news_id;
+        console.log(req.query);
         const id = await tokenCheck(req);
 
         const user = await UserSchema.findOne({ user_id: id });
         if (user) {
             const saveCheck = user.news_bookmark.some(
-                (news) => news.toString() === savedNews._id
+                (news) => news.toString() === savedNews
             );
             if (saveCheck) {
                 res.json({ isSavedNews: saveCheck });
@@ -438,10 +438,10 @@ exports.myHighlight = async (req, res) => {
         // const highlightTxt = req.body.selectedTxt;
         const id = await tokenCheck(req);
 
-        // 형광펜 저장 텍스트 데이터가 있는 유저인지 구분
+        // 과거에 형광펜 저장했던 유저인지 구분
         const saveUserCheck = await MyHighlightSchema.findOne({ user_id: id });
 
-        // 형광펜 저장 텍스트 데이터 없는 유저
+        // 형광펜 저장 처음인 유저
         if (!saveUserCheck) {
             await MyHighlightSchema.create({
                 user_id: id,
