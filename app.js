@@ -10,7 +10,7 @@ mongoConnect();
 const PORT = process.env.PORT || 8000;
 app.use(
     cors({
-        origin: 'http://43.200.179.141/', // 클라이언트의 도메인
+        origin: process.env.ORIGIN, // 클라이언트의 도메인
         credentials: true,
     })
 );
