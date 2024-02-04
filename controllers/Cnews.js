@@ -380,7 +380,7 @@ exports.saveMyWord = async (req, res) => {
 exports.checkMyNews = async (req, res) => {
     try {
         const savedNews = req.query.news_id;
-        console.log(req.query);
+        // console.log(req.query);
         const id = await tokenCheck(req);
 
         const user = await UserSchema.findOne({ user_id: id });
