@@ -179,7 +179,7 @@ exports.communityRank = async (req, res) => {
         const rankPosts = await CommunitySchema.find()
             .populate('userId', 'user_nickname user_profile')
             .sort({
-                like: -1,
+                likedUser: -1,
             })
             .limit(5);
         res.json(rankPosts);
