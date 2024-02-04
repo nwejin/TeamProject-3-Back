@@ -50,6 +50,7 @@ router.get('/commentRead', Ccommunity.commentRead);
 
 // 좋아요 추가
 router.post('/like', Ccommunity.communityLike);
+router.get('/like', Ccommunity.communityGetLike);
 
 // 좋아요 순위로 가져오기
 router.get('/rank', Ccommunity.communityRank);
