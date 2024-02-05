@@ -70,7 +70,7 @@ exports.communityRead = async (req, res) => {
                 // 내림차순
                 date: -1,
             });
-        console.log('communityPosts' > communityPosts);
+        // console.log('communityPosts' > communityPosts);
         res.json(communityPosts);
     } catch (err) {
         console.log(err);

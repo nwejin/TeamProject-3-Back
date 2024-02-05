@@ -222,7 +222,7 @@ exports.getEconomyNews = async (req, res) => {
 // 메인페이지 뉴스 2개 가져오기
 exports.getMainNews = async (req, res) => {
     try {
-        const news = await NewsSchema.find().limit(2);
+        const news = await NewsSchema.find().limit(2).sort({ date: -1 });
         // console.log(news);
         if (news.length === 0) {
             res.send({ success: false, msg: '등록된 뉴스가 없습니다.' });
