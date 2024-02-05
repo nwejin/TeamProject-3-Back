@@ -20,7 +20,7 @@ app.use(
 // app.use(
 //     '/api',
 //     createProxyMiddleware({
-//         target: 'http://43.200.179.141:8000',
+//         target: 'http://localhost:8000',
 //         changeOrigin: true,
 //     })
 // );

@@ -176,12 +176,14 @@ exports.commentRead = async (req, res) => {
 exports.communityRank = async (req, res) => {
     // DB에서 데이터 가져오기
     try {
-        const rankPosts = await CommunitySchema.find()
-            .populate('userId', 'user_nickname user_profile')
-            .sort({
-                likedUser: -1,
-            })
-            .limit(5);
+        const rankPosts = await CommunitySchema.find().populate(
+            'userId',
+            'user_nickname user_profile'
+        );
+        // .sort({
+        //     likeUser: -1,
+        // })
+        // .limit(5);
         res.json(rankPosts);
     } catch (err) {
         console.log(err);
