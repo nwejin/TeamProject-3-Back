@@ -10,10 +10,21 @@ mongoConnect();
 const PORT = process.env.PORT || 8000;
 app.use(
     cors({
-        origin: 'http://localhost:3000', // 클라이언트의 도메인
+        origin: 'http://43.200.179.141:3000', // 클라이언트의 도메인
         credentials: true,
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     })
 );
+
+// const { createProxyMiddleware } = require('http-proxy-middleware');
+// app.use(
+//     '/api',
+//     createProxyMiddleware({
+//         target: 'http://43.200.179.141:8000',
+//         changeOrigin: true,
+//     })
+// );
+
 const bodyParser = require('body-parser');
 app.use(cookieParser());
 app.use(bodyParser.json());
