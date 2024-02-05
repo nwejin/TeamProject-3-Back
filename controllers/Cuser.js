@@ -148,14 +148,28 @@ exports.userFindId = async (req, res) => {
     try {
         console.log(req.body);
         const { user_email, user_password } = req.body;
+
         const user = await UserSchema.findOne({
-            user_password: user_password,
             user_email: user_email,
         });
+        console.log('아이디 찾기', user);
         if (!user) {
             res.send({ success: false });
         } else {
-            res.send({ success: true, userInfo: user });
+            const storedPassword = user.user_password;
+            const isPasswordMatch = bcrypt.compareSync(
+                user_password,
+                storedPassword
+            );
+
+            if (!isPasswordMatch) {
+                res.send({
+                    success: false,
+                    message: '비밀번호가 일치하지 않습니다',
+                });
+            } else {
+                res.send({ success: true, userInfo: user });
+            }
         }
     } catch (err) {
         console.log(err);
