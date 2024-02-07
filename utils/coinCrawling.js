@@ -1,28 +1,28 @@
 // 코인뉴스 크롤링(코인니스)
-const cheerio = require("cheerio");
-const iconv = require("iconv-lite");
-const axios = require("axios");
+const cheerio = require('cheerio');
+const iconv = require('iconv-lite');
+const axios = require('axios');
 
 const getOriginNews = async (originUrl) => {
     try {
         // Axios 사용하여 웹 페이지의 HTML을 가져옴
         const response = await axios.get(originUrl, {
-            responseType: "arrayBuffer",
+            responseType: 'arrayBuffer',
         });
         // response.data를 Buffer로 변환하고, toString()을 사용하여 인코딩 적용
-        const newsDecoded = Buffer.from(response.data).toString("utf-8");
+        const newsDecoded = Buffer.from(response.data).toString('utf-8');
         // cheerio를 사용하여 HTML를 파싱
         const $ = cheerio.load(newsDecoded);
         // 원하는 정보를 추출하여 출력 또는 다른 작업 수행
-        const newContentArray = $("#article-view-content-div > p:nth-child(n)");
-        var newContent = "";
+        const newContentArray = $('#article-view-content-div > p:nth-child(n)');
+        var newContent = '';
         // 선택한 요소의 형제 요소들을 반복
-        newContentArray.siblings("p").each(function () {
-            newContent += $(this).text() + "\n";
+        newContentArray.siblings('p').each(function () {
+            newContent += $(this).text() + '\n';
         });
         const bigImageUrl = $(
-            "#article-view-content-div > div:nth-child(1) > figure > div > img"
-        ).attr("src");
+            '#article-view-content-div > div:nth-child(1) > figure > div > img'
+        ).attr('src');
         var bigImageAndContent = {
             newContent,
             bigImageUrl,
@@ -40,26 +40,23 @@ const getCoinNewsList = async (newsFieldUrl) => {
         // get 함수를 사용하여 지정된 URL에서 GET 요청을 보냄
         // Axios 사용하여 웹 페이지의 HTML을 가져옴
         const response = await axios.get(newsFieldUrl, {
-            responseType: "arrayBuffer",
+            responseType: 'arrayBuffer',
         });
 
-        const listDecoded = Buffer.from(response.data).toString("utf-8");
-        // console.log("Decoded HTML:", listDecoded);
+        const listDecoded = Buffer.from(response.data).toString('utf-8');
 
         const $ = cheerio.load(listDecoded);
-        const listArray = $("#section-list > ul > li:nth-child(n)").toArray();
-
-        // console.log("listArray", listArray);
+        const listArray = $('#section-list > ul > li:nth-child(n)').toArray();
 
         var listResult = [];
         for (const dataList of listArray) {
-            const smallImage = $(dataList).find("div > a > img");
-            const smallimg = smallImage.attr("src");
+            const smallImage = $(dataList).find('div > a > img');
+            const smallimg = smallImage.attr('src');
             const url =
-                "https://www.digitaltoday.co.kr" +
-                $(dataList).find("div > a").attr("href");
-            const date = $(dataList).find("span > em").text();
-            const title = $(dataList).find(" div > h4 > a").text();
+                'https://www.digitaltoday.co.kr' +
+                $(dataList).find('div > a').attr('href');
+            const date = $(dataList).find('span > em').text();
+            const title = $(dataList).find(' div > h4 > a').text();
             try {
                 const bigImageAndContent = await getOriginNews(url);
                 const content = bigImageAndContent.newContent;
@@ -74,31 +71,13 @@ const getCoinNewsList = async (newsFieldUrl) => {
                     date,
                 });
             } catch (error) {
-                console.error("list push 에러");
+                console.error('list push 에러');
                 continue;
             }
         }
-        // console.log("listResult", listResult);
         return listResult;
-        // console.log(listResult.length);
     } catch (error) {
-        console.error("뉴스 리스트 불러오기 실패", error);
+        console.error('뉴스 리스트 불러오기 실패', error);
     }
 };
-
-// 뉴스 분야별 분리
-// 주식 1
-// getNewsList("https://kr.investing.com/news/stock-market-news");
-
-// 암호화폐 2
-// getNewsList("https://kr.investing.com/news/cryptocurrency-news");
-
-// 경제 3
-// getNewsList("https://kr.investing.com/news/economy");
-
 module.exports = getCoinNewsList;
-
-// 코인뉴스 크롤링 테스트
-// getCoinNewsList(
-//     "https://www.digitaltoday.co.kr/news/articleList.html?page=1&total=12260&sc_section_code=S1N9&sc_sub_section_code=&sc_serial_code=&sc_second_serial_code=&sc_area=&sc_level=&sc_article_type=&sc_view_level=&sc_sdate=&sc_edate=&sc_serial_number=&sc_word=&box_idxno=&sc_multi_code=&sc_is_image=&sc_is_movie=&sc_user_name=&sc_order_by=E&view_type=sm"
-// );

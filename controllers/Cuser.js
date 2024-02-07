@@ -4,31 +4,15 @@ const UserSchema = require('../models/UserSchema');
 const StockWordSchema = require('../models/StockWordSchema');
 const { tokenCheck } = require('../utils/tokenCheck');
 const CommunitySchema = require('../models/CommunitySchema');
-// const WordSchema = require("../models/WordSchema");
 require('dotenv').config();
 const jwtSecret = process.env.JWTSECRET;
 const cookieConfig = {
-    // httpOnly: true,
     maxAge: 60 * 60 * 1000,
 };
 
 const cookieConfig2 = {
     maxAge: 7 * 24 * 60 * 60 * 1000,
 };
-
-// exports.userInsert = async (req, res) => {
-//     await StockWordSchema.create({
-//         eng_word: 'gqeew',
-//         kor_word: '4903',
-//         explanation: 'hi@gmail.com',
-//     })
-//         .then((result) => {
-//             console.log('data insert success');
-//         })
-//         .catch((err) => {
-//             console.log(err);
-//         });
-// };
 
 exports.userLogin = async (req, res) => {
     try {

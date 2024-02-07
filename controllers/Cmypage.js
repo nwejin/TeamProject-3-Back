@@ -12,13 +12,10 @@ const jwtSecret = process.env.JWTSECRET;
 
 exports.getMyInfo = async (req, res) => {
     try {
-        // console.log(req.body.id);
         const id = await tokenCheck(req);
-        // console.log('토큰 체크 후 아이디');
         const user = await UserSchema.findOne({
             user_id: id,
         });
-        // console.log('유저 정보', user);
         res.send({ info: user });
     } catch (error) {
         console.log(error);
@@ -28,7 +25,6 @@ exports.getMyInfo = async (req, res) => {
 
 exports.checkUserNickname = async (req, res) => {
     try {
-        // console.log(req.body);
         const { user_nickname } = req.body.userData;
         const user = await UserSchema.findOne({
             user_nickname: user_nickname,
@@ -58,7 +54,6 @@ exports.checkUserNickname = async (req, res) => {
 };
 exports.checkUserPassword = async (req, res) => {
     try {
-        // console.log(req.body);
         const { user_password } = req.body.userData;
         const currentUser = await UserSchema.findOne({
             user_id: req.body.currentUserId,
@@ -85,9 +80,6 @@ exports.checkUserPassword = async (req, res) => {
 };
 exports.modifyUserInfo = async (req, res) => {
     const { user_nickname, user_changepw, user_email } = req.body;
-    // req.body.userData;
-    // console.log('req body>', req.body);
-    // console.log('nickname>', req.body.user_nickname);
     console.log(req.body.user_profile);
     console.log(req.file);
     const user_profile = req.file ? req.file.location : null;

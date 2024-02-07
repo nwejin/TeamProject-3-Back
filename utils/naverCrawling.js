@@ -32,9 +32,6 @@ const getOriginNews = async (originUrl) => {
                 subTitle = bTag;
             }
         }
-        console.log('subTitle', subTitle);
-        // console.log('imgDesc', imgDesc);
-        // console.log('newContent', newContent);
         const bigImageUrl = $('#img1').attr('data-src');
         const newsDate = $(
             '#ct > div.media_end_head.go_trans > div.media_end_head_info.nv_notrans > div.media_end_head_info_datestamp > div > span'
@@ -42,7 +39,6 @@ const getOriginNews = async (originUrl) => {
             .first()
             .text()
             .trim();
-        // console.log(newsDate);
         var bigImageAndContent = {
             subTitle,
             newContent,
@@ -113,20 +109,14 @@ const getNaverNewsList = async (newsFieldUrl) => {
                     subtitle,
                 });
             } catch (error) {
-                // console.log("list1 push 에러");
                 continue;
             }
         }
-        console.log('listResult', listResult);
-        console.log(listResult.length);
         return listResult;
     } catch (error) {
         console.log('뉴스 리스트 불러오기 실패', error);
     }
 };
-
-// getNaverNewsList('https://news.naver.com/breakingnews/section/101/263');
-// 'https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=259'
 
 // --------------------------------------------------------------------------------------
 // 모든 경제분야 뉴스 크롤링
@@ -173,20 +163,13 @@ const getMainNewsList = async (newsFieldUrl) => {
                     subtitle,
                 });
             } catch (error) {
-                // console.log("list1 push 에러");
                 continue;
             }
         }
-        console.log('listResult', listResult);
-        console.log(listResult.length);
         return listResult;
     } catch (error) {
         console.log('뉴스 리스트 불러오기 실패', error);
     }
 };
-
-// getMainNewsList(
-//     'https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=101'
-// );
 
 module.exports = { getNaverNewsList, getMainNewsList };

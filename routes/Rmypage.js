@@ -26,7 +26,6 @@ const storage = multerS3({
         const filename = `${uuid()}-${file.originalname}`;
         cb(null, filename);
     },
-    // limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 const upload = multer({ storage: storage });

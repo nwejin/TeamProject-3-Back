@@ -16,15 +16,6 @@ app.use(
     })
 );
 
-// const { createProxyMiddleware } = require('http-proxy-middleware');
-// app.use(
-//     '/api',
-//     createProxyMiddleware({
-//         target: 'http://localhost:8000',
-//         changeOrigin: true,
-//     })
-// );
-
 const bodyParser = require('body-parser');
 app.use(cookieParser());
 app.use(bodyParser.json());
