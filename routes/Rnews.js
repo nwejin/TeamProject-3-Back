@@ -21,7 +21,7 @@ router.post('/deleteWords', Cnews.deleteMyWords);
 router.get('/getMyNews', Cnews.getMyNews);
 
 // -------------------------------------------------------------------
-
+router.get('/getDetail', Cnews.getDetail);
 router.get('/getWordsDb', Cnews.getWordsDb);
 
 router.get('/checkMyWord', Cnews.checkMyWord);
