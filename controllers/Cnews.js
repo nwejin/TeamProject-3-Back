@@ -278,6 +278,17 @@ exports.getMyNews = async (req, res) => {
 };
 
 // ------------------------------------------------------------------
+// 상세페이지 데이터 전송
+exports.getDetail = async (req, res) => {
+    try {
+        const { id } = req.query;
+        const data = await NewsSchema.findOne({ _id: id });
+        // console.log(data);
+        res.send(data);
+    } catch (error) {
+        console.error(error);
+    }
+};
 
 // Db에서 newsDetail로 단어 전송
 exports.getWordsDb = async (req, res) => {
