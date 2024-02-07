@@ -1,9 +1,9 @@
 // 크롤링 후 DB 저장
-const NewsSchema = require("../models/NewsSchema");
+const NewsSchema = require('../models/NewsSchema');
 
 exports.saveNewsData = async (req, res) => {
     const newsDataObject = await newsCrawling(
-        "https://kr.investing.com/news/economy"
+        'https://kr.investing.com/news/economy'
     );
     const newsDatas = Object.values(newsDataObject);
     try {
@@ -14,8 +14,7 @@ exports.saveNewsData = async (req, res) => {
                 continue;
             }
         }
-        console.log("데이터 넣기 성공");
-        res.send("데이터 넣기 성공");
+        res.send('데이터 넣기 성공');
     } catch (error) {
         console.error(error);
     }

@@ -33,7 +33,6 @@ exports.login = async (req, res) => {
     let userpassword;
 
     try {
-        // console.log(req.query);
         const param = qs.stringify({
             grant_type: 'authorization_code',
             client_id: process.env.CLIENT_ID,
@@ -42,14 +41,10 @@ exports.login = async (req, res) => {
             code: req.query.code,
         });
         const header = { 'content-type': 'application/x-www-form-urlencoded' };
-        // console.log(process.env.TOKEN_URI);
         const rtn = await call('POST', process.env.TOKEN_URI, param, header);
-        // console.log(rtn.access_token);
         kakaoToken = rtn.access_token;
 
         try {
-            // console.log('/profile 시작');
-            // console.log(kakaoToken);
             const uri = process.env.API_HOST + '/v2/user/me';
             const param = {};
             const header = {
@@ -60,24 +55,15 @@ exports.login = async (req, res) => {
             const rtn = await call('POST', uri, param, header);
 
             try {
-                // console.log(rtn);
-                // console.log(rtn.id); // 아이디
-                // console.log(rtn.properties.nickname); // 닉네임(실명)
-                // console.log(rtn.properties.profile_image); // 큰 프로필
-                // console.log(rtn.properties.thumbnail_image); // 작은 프로필
-                // console.log(rtn.kakao_account.email); // 이메일
                 userid = rtn.id.toString();
                 usernickname = rtn.properties.nickname;
                 userprofile = rtn.properties.profile_image;
                 useremail = rtn.kakao_account.email;
-                // console.log('패스워드 암호화 시작');
                 userpassword = bcrypt.hashSync(userid, 10);
-                // console.log('userpassword', userpassword);
 
                 const checkUser = await UserSchema.findOne({
                     user_id: userid,
                 });
-                // console.log('checkUser', checkUser);
 
                 // 해당 유저가 DB에 없으면 DOCUMENT 생성
                 if (!checkUser) {
@@ -89,7 +75,6 @@ exports.login = async (req, res) => {
                         user_profile: userprofile,
                         isKakao: 1,
                     });
-                    // console.log('newUser', newUser);
                 }
 
                 // 카카오 로그인 여부 확인
@@ -114,23 +99,6 @@ exports.login = async (req, res) => {
         res.send('login 오류');
     }
 };
-
-// 로그아웃
-// exports.logout = async (req, res) => {
-//     const uri = process.env.API_HOST + '/v1/user/logout';
-//     const param = null;
-//     const header = {
-//         Authorization: 'Bearer ' + kakaoToken,
-//     };
-//     try {
-//         var rtn = await call('POST', uri, param, header);
-//         kakaoToken = '';
-//         res.send(rtn);
-//     } catch (error) {
-//         console.log(error);
-//         res.send('로그아웃 실패');
-//     }
-// };
 
 // 회원탈퇴
 exports.exit = async (req, res) => {

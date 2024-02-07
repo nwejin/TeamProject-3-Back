@@ -67,7 +67,6 @@ exports.resetNewsList = async (req, res) => {
             const [year, month, day] = datePart.split('.').map(Number); // 년, 월, 일 추출
             let [hour, minute] = timePart.split(':').map(Number); // 시간과 분 추출
 
-            // 오후인 경우, 시간을 12시간 추가
             if (amPm.includes('오후') && hour !== 12) {
                 hour += 12;
             }
@@ -80,8 +79,6 @@ exports.resetNewsList = async (req, res) => {
 
             return dateB - dateA;
         });
-        // console.log(newsDatas);
-        // 클라이언트로 데이터 전송
         res.send(newsDatas);
         console.log('데이터 보내기 성공');
     } catch (error) {
@@ -98,10 +95,6 @@ exports.getStockNews = async (req, res) => {
         const newsDatas = await getNaverNewsList(
             'https://news.naver.com/breakingnews/section/101/258'
         );
-
-        // 클라이언트로 데이터 전송
-        // res.send('newsDatas');
-        // console.log('데이터 보내기 성공');
 
         //데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
@@ -135,10 +128,6 @@ exports.getCoinNews = async (req, res) => {
             'https://www.digitaltoday.co.kr/news/articleList.html?page=1&total=12260&sc_section_code=S1N9&sc_sub_section_code=&sc_serial_code=&sc_second_serial_code=&sc_area=&sc_level=&sc_article_type=&sc_view_level=&sc_sdate=&sc_edate=&sc_serial_number=&sc_word=&box_idxno=&sc_multi_code=&sc_is_image=&sc_is_movie=&sc_user_name=&sc_order_by=E&view_type=sm'
         );
 
-        // 클라이언트로 데이터 전송
-        // res.send(newsDatas);
-        // console.log('데이터 보내기 성공');
-
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
             newsDatas.map(async (newsdata) => {
@@ -163,17 +152,6 @@ exports.getCoinNews = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-//   catch (error) {
-//     console.error('Error in main function:', error);
-//     res.status(500).send('Internal Server Error');
-//   }
-//   console.log('데이터 넣기 성공');
-//   res.send('데이터 넣기 성공');
-// };
-//   } catch (error) {
-//     console.error(error);
-//   };
-// };
 
 // 경제 뉴스 가져오기
 exports.getEconomyNews = async (req, res) => {
@@ -182,10 +160,6 @@ exports.getEconomyNews = async (req, res) => {
         const newsDatas = await getNaverNewsList(
             'https://news.naver.com/breakingnews/section/101/263'
         );
-
-        // 클라이언트로 데이터 전송
-        // res.send(newsDatas);
-        // console.log('데이터 보내기 성공');
 
         // 데이터베이스 작업을 비동기적으로 실행
         await Promise.all(
@@ -223,7 +197,6 @@ exports.getEconomyNews = async (req, res) => {
 exports.getMainNews = async (req, res) => {
     try {
         const news = await NewsSchema.find().limit(2).sort({ date: -1 });
-        // console.log(news);
         if (news.length === 0) {
             res.send({ success: false, msg: '등록된 뉴스가 없습니다.' });
         } else {
@@ -241,12 +214,10 @@ exports.getMainNews = async (req, res) => {
 exports.getMyWords = async (req, res) => {
     try {
         const id = await tokenCheck(req);
-        // console.log(id);
 
         const user = await UserSchema.find({
             user_id: id,
         });
-        // console.log(user);
         if (user.length === 0) {
             res.send({ success: false, msg: '좋아요한 단어가 없습니다.' });
         } else {
@@ -295,9 +266,7 @@ exports.getMyNews = async (req, res) => {
         const user = await UserSchema.findOne({ user_id }).populate(
             'news_bookmark'
         );
-        // console.log(user);
         const savedNews = user.news_bookmark;
-        // console.log('---------', savedNews);
         if (savedNews) {
             res.json({ success: true, news: savedNews });
         } else {
@@ -314,7 +283,6 @@ exports.getMyNews = async (req, res) => {
 exports.getWordsDb = async (req, res) => {
     try {
         const words = await WordsSchema.find();
-        // console.log(words);
         res.json(words);
     } catch (error) {
         console.error(error);
@@ -325,7 +293,6 @@ exports.getWordsDb = async (req, res) => {
 exports.checkMyWord = async (req, res) => {
     try {
         const modalWord = req.query.modalWord;
-        // console.log('하트체크',modalWord);
         const id = await tokenCheck(req);
 
         const user = await UserSchema.findOne({ user_id: id });
@@ -347,11 +314,8 @@ exports.checkMyWord = async (req, res) => {
 // wordModal에서 하트 누른 단어 userDb에 저장
 exports.saveMyWord = async (req, res) => {
     try {
-        // console.log(req.body);
         const modalWord = req.body.modalWord;
-        // console.log(modalWord);
         const id = await tokenCheck(req);
-        // console.log(id);
         const user = await UserSchema.findOne({ user_id: id });
         if (user) {
             const duplicateCheck = user.word_bookmark.some(
@@ -380,7 +344,6 @@ exports.saveMyWord = async (req, res) => {
 exports.checkMyNews = async (req, res) => {
     try {
         const savedNews = req.query.news_id;
-        // console.log(req.query);
         const id = await tokenCheck(req);
 
         const user = await UserSchema.findOne({ user_id: id });
@@ -402,7 +365,6 @@ exports.checkMyNews = async (req, res) => {
 // news 저장
 exports.saveMyNews = async (req, res) => {
     try {
-        // console.log(req.body);
         const savedNews = req.body.data;
         const id = await tokenCheck(req);
 
@@ -433,9 +395,7 @@ exports.saveMyNews = async (req, res) => {
 // 형광펜 텍스트 저장
 exports.myHighlight = async (req, res) => {
     try {
-        // console.log(req.body);
         const { news_id, selectedTxt } = req.body;
-        // const highlightTxt = req.body.selectedTxt;
         const id = await tokenCheck(req);
 
         // 과거에 형광펜 저장했던 유저인지 구분
@@ -477,18 +437,15 @@ exports.myHighlight = async (req, res) => {
 // 형광펜 텍스트 프론트로 전송
 exports.getHighlight = async (req, res) => {
     try {
-        // console.log('--------------', req.query);
         const { news_id } = req.query;
         const id = await tokenCheck(req);
 
         const user = await MyHighlightSchema.findOne({ user_id: id });
-        // console.log('------------------', user);
         if (user) {
             // news_id가 일치하는 데이터 객체 찾기
             const findHighlight = user.highlight.find(
                 (h) => h.news_id === news_id
             );
-            // console.log('-------', findHighlight);
             if (findHighlight) {
                 res.json({ available: true, highlight: findHighlight });
             } else {
@@ -505,20 +462,13 @@ exports.getHighlight = async (req, res) => {
 // 형광펜 삭제
 exports.deleteHighlight = async (req, res) => {
     try {
-        // console.log(req.body);
         const { news_id, highlightTxt } = req.body;
         const user_id = await tokenCheck(req);
 
         const user = await MyHighlightSchema.findOne({ user_id });
 
         const findNewsid = user.highlight.find((h) => h.news_id === news_id);
-        // console.log('-----!!!', findNewsid);
-        //     news_id: '65b85778fa8f6cc76f570baa',
-        //     word: [ '전문기업 CJ' ],
-        //     _id: new ObjectId('65bdf21b49b9eb0d24b3f501')
-        //   }
         const findHighlightWord = findNewsid.word;
-        // console.log('--------!', findHighlightWord[0]);
 
         // findHighlightWord 배열의 길이가 1이고, highlightTxt와 일치하면 해당 객체 삭제
         if (
@@ -529,7 +479,6 @@ exports.deleteHighlight = async (req, res) => {
                 { user_id },
                 { $pull: { highlight: { news_id } } }
             );
-            // console.log('=======', deleteObj);
             if (deleteObj.modifiedCount === 1) {
                 res.json({ success: true, msg: '하이라이트 삭제 완료' });
             } else {

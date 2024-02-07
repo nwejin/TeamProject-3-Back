@@ -30,7 +30,6 @@ const storage = multerS3({
         const filename = `${uuid()}-${file.originalname}`;
         cb(null, filename);
     },
-    // limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 // multer설정을 라우터로 빼기

@@ -12,13 +12,9 @@ exports.community = async (req, res) => {};
 
 // 1. DB 저장
 
-// (exports.communityWrite = upload.single('file')),
 exports.communityWrite = async (req, res) => {
     try {
-        console.log('Received POST request to /community/write');
-
         const userId = await tokenCheck(req);
-        // console.log(userId);
 
         const user = await UserSchema.findOne({
             user_id: userId,
@@ -30,15 +26,8 @@ exports.communityWrite = async (req, res) => {
         const nickName = user.user_nickname;
         const user_Profile = user.user_profile;
         const user_id = user._id;
-        // console.log(nickName);
-
-        // console.log('req.body>', req.body);
-
-        // console.log('req.body.file >', req.body.file);
-        // console.log('req.file >', req.file);
 
         const imageUrl = req.file ? req.file.location : null;
-        // console.log('Uploaded Image URL:', imageUrl);
         await CommunitySchema.create({
             userId: user_id,
             userNickName: nickName,
@@ -52,8 +41,6 @@ exports.communityWrite = async (req, res) => {
         });
 
         res.send('게시글 작성 완료');
-
-        // console.log(req.cookies.jwtCookie);
     } catch (err) {
         console.log(err);
         res.status(500).send('게시글 작성 실패');
@@ -70,7 +57,6 @@ exports.communityRead = async (req, res) => {
                 // 내림차순
                 date: -1,
             });
-        // console.log('communityPosts' > communityPosts);
         res.json(communityPosts);
     } catch (err) {
         console.log(err);
@@ -180,10 +166,6 @@ exports.communityRank = async (req, res) => {
             'userId',
             'user_nickname user_profile'
         );
-        // .sort({
-        //     likeUser: -1,
-        // })
-        // .limit(5);
         res.json(rankPosts);
     } catch (err) {
         console.log(err);
@@ -197,7 +179,6 @@ exports.replyWrite = async (req, res) => {
         console.log('Received POST request to /community/replyWrite');
 
         const userId = await tokenCheck(req);
-        // console.log(userId);
 
         const user = await UserSchema.findOne({
             user_id: userId,
@@ -227,7 +208,6 @@ exports.replyWrite = async (req, res) => {
 exports.replyRead = async (req, res) => {
     // // DB에서 데이터 가져오기
     const commentID = req.query.data;
-    // console.log(commentID);
     try {
         const comment = await ReCommentSchema.find({
             commentId: commentID,
@@ -265,7 +245,6 @@ exports.getMainBoards = async (req, res) => {
 
 exports.modifyCommunity = async (req, res) => {
     try {
-        // console.log('수정 폼 데이터 받기', req.body);
         const result = await CommunitySchema.updateOne(
             { _id: req.body._id },
             {
@@ -274,7 +253,6 @@ exports.modifyCommunity = async (req, res) => {
                 content: req.body.content,
             }
         );
-        // console.log('수정 결과', result);
         res.send('데이터 수정 성공');
     } catch (error) {
         res.send('데이터 수정 실패');
@@ -284,7 +262,6 @@ exports.modifyCommunity = async (req, res) => {
 exports.updateCommunity = async (req, res) => {
     try {
         const result = await CommunitySchema.findById(req.query.postid);
-        console.log(result);
         res.send(result);
     } catch (error) {
         console.log(error);
@@ -297,17 +274,14 @@ exports.deleteCommunity = async (req, res) => {
         const result = await CommunitySchema.findByIdAndDelete(
             req.body.communityId
         );
-        console.log('삭제 결과', result);
         res.send(result);
     } catch (error) {
-        console.log('게시물 삭제 실패');
         res.send('게시물 삭제 실패');
     }
 };
 
 exports.searchCommunity = async (req, res) => {
     try {
-        console.log('검색 단어', req.query.searchWord);
         const regex = new RegExp(req.query.searchWord, 'i');
         const searchResult = await CommunitySchema.find({
             $or: [{ title: regex }, { content: regex }],
@@ -316,10 +290,9 @@ exports.searchCommunity = async (req, res) => {
             .sort({
                 date: -1,
             });
-        console.log('검색 결과', searchResult);
         res.send(searchResult);
     } catch (error) {
-        console.log('게시물 DB 검색 실패', error);
+        //console.log('게시물 DB 검색 실패', error);
         res.send('게시물 DB 검색 실패');
     }
 };
@@ -327,12 +300,9 @@ exports.searchCommunity = async (req, res) => {
 // 신고하기
 exports.reportCommunity = async (req, res) => {
     try {
-        console.log('Received POST request to /community/report');
         const { reportData } = req.body;
-        // console.log(reportData); // 게시글 id 키 값
 
         const userId = await tokenCheck(req);
-        console.log(userId);
 
         const user = await UserSchema.findOne({
             user_id: userId,
@@ -349,26 +319,19 @@ exports.reportCommunity = async (req, res) => {
         const alreadyReported = result.reportedUser.includes(user_id);
 
         let active;
-        console.log('1', result.reportedUser);
 
         if (alreadyReported) {
             result.reportedUser = result.reportedUser.filter(
                 (id) => id.toString() !== user_id.toString()
             );
-            console.log('신고 취소');
             active = false;
         } else {
             result.reportedUser.push(user_id);
-            console.log('신고 완료');
             active = true;
         }
 
-        console.log('2', result.reportedUser);
         await result.save();
 
-        // result.reportedUser.push(user_id);
-
-        console.log(result);
         res.send({ result, active });
     } catch (error) {
         console.log('신고 에러', error);
@@ -377,13 +340,9 @@ exports.reportCommunity = async (req, res) => {
 
 exports.getReportCommunity = async (req, res) => {
     try {
-        console.log('Received get request to /community/report');
-        console.log(req.query);
         const { userId, postId } = req.query;
-        console.log(userId);
 
         const result = await CommunitySchema.findById(postId);
-        console.log('result>', result);
         const isUserReported = result.reportedUser.some(
             (reportedUserId) => reportedUserId.toString() === userId.toString()
         );
@@ -396,16 +355,11 @@ exports.getReportCommunity = async (req, res) => {
 
 exports.communityGetLike = async (req, res) => {
     try {
-        console.log('Received get request to /community/like');
-        console.log(req.query);
         const { userId, postId } = req.query;
-        console.log(userId);
 
         const result = await CommunitySchema.findById(postId);
-        // console.log('result>', result);
 
         const like = result.likedUser.length;
-        // console.log('like', like);
 
         const isUserliked = result.likedUser.some(
             (likeudUserId) => likeudUserId.toString() === userId.toString()

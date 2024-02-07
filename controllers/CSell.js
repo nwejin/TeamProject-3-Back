@@ -5,14 +5,13 @@ const { tokenCheck } = require('../utils/tokenCheck');
 
 exports.post_profit = async (req, res) => {
     const { profit } = req.body;
-    const { jwtCookie } = req.cookies; // 비로그인 시 savedId만 전달 -> 로그인 시 savedId + jwtCookie 전달
-    const userid = await tokenCheck(req); //saveId 대신 userid로 저장
+    const { jwtCookie } = req.cookies;
+    const userid = await tokenCheck(req);
     console.log('req.body > ', profit);
 
     try {
         if (jwtCookie) {
-            // 로그인 시
-            let searchData = await VirtualSchema.findOne({ userid: userid }); // userid로 DB 검색
+            let searchData = await VirtualSchema.findOne({ userid: userid });
 
             if (!searchData) {
                 // userid가 없으면 정보 저장
@@ -23,9 +22,7 @@ exports.post_profit = async (req, res) => {
                     loss: 0,
                 });
                 searchData = await newData.save();
-                console.log('new data', searchData);
             } else {
-                // userid가 있으면 수익 업데이트
                 searchData.profit += profit;
             }
 
@@ -41,11 +38,9 @@ exports.post_profit = async (req, res) => {
                 console.log('profit loss');
             }
 
-            // 모든 수정이 완료 후 저장 -> 병렬 저장 방지를 위해 마지막으로 save
             await searchData.save();
             res.send({ success: true });
         } else {
-            // 비로그인 시
             console.log('not jwt, 비로그인임');
         }
     } catch (error) {
@@ -57,7 +52,7 @@ exports.post_profit = async (req, res) => {
 // 모의투자 통계
 exports.post_showRecord = async (req, res) => {
     try {
-        const userid = await tokenCheck(req); //여기서 아이디 검증 -> findOne에서 할 필요 x
+        const userid = await tokenCheck(req);
         console.log('userid record', userid);
 
         const record = await VirtualSchema.findOne({ userid: userid });
@@ -88,8 +83,6 @@ exports.post_ProfitAndLoss = async (req, res) => {
                 { $push: { profitArray: profit } },
                 { returnDocument: 'after' }
             );
-            console.log('profitAnd loss', ProfitAndLoss.profitArray); // 이 부분을 추가하여 배열을 출력
-            // res.send(ProfitAndLoss.profitArray);
         }
     } catch (error) {
         console.log(error);
@@ -98,11 +91,11 @@ exports.post_ProfitAndLoss = async (req, res) => {
     res.send(true);
 };
 
-//모의투자 랭킹 보기 (전체 유저의 profit순으로 정렬 (win rate도 같이 보내기))
+//모의투자 랭킹 보기
 exports.post_showRank = async (req, res) => {
     try {
-        let rank = []; //rank = 모든 사용자 {id, profit, win, objectId.user_profile} 으로 구성
-        let profileValue = []; //{key: userid, value : profile 주소}
+        let rank = [];
+        let profileValue = [];
         const userId = await tokenCheck(req);
 
         const user = await UserSchema.find({});
@@ -120,7 +113,7 @@ exports.post_showRank = async (req, res) => {
         const allRank = await VirtualSchema.find().sort({
             profit: -1,
             win: -1,
-        }); //모든 사용자 기록..
+        });
 
         allRank.map((item) => {
             const { userid, profit, win } = item;
@@ -131,16 +124,13 @@ exports.post_showRank = async (req, res) => {
                 }
             }
         });
-
-        console.log('rank  randk dkdanknjbn> ', rank);
-
         res.send({ rank: rank });
     } catch (err) {
         res.send(err);
     }
 };
 
-// 클릭한 용어의 설명을 출력합니다.
+// 클릭한 용어의 설명을 출력
 exports.get_vocabulary = async (req, res) => {
     try {
         const { eng_word } = req.query;
@@ -149,7 +139,6 @@ exports.get_vocabulary = async (req, res) => {
             eng_word: eng_word,
         });
         res.send({ data: word });
-        // res.send('hi');
     } catch (error) {
         console.log(error);
     }
