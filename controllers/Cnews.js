@@ -282,9 +282,17 @@ exports.getMyNews = async (req, res) => {
 exports.getDetail = async (req, res) => {
     try {
         const { id } = req.query;
+        if (id.length < 24) {
+            res.send({ isValid: false });
+            return;
+        }
         const data = await NewsSchema.findOne({ _id: id });
-        // console.log(data);
-        res.send(data);
+        if (data) {
+            res.send({ isValid: true, detail: data });
+        } else {
+            res.send({ isValid: false });
+        }
+        // res.send(data);
     } catch (error) {
         console.error(error);
     }
