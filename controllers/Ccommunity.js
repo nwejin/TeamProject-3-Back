@@ -299,6 +299,33 @@ exports.deleteCommunity = async (req, res) => {
     }
 };
 
+// 댓글 삭제
+exports.deleteComment = async (req, res) => {
+    try {
+        const result = await CommentSchema.findByIdAndDelete(
+            req.body.commentId
+        );
+        // 대댓글까지 삭제
+        const resultRe = await ReCommentSchema.deleteMany({
+            commentId: req.body.commentId,
+        });
+        res.send(result);
+    } catch (error) {
+        res.send('댓글 삭제 실패');
+    }
+};
+
+exports.deleteReComment = async (req, res) => {
+    try {
+        const result = await ReCommentSchema.findByIdAndDelete(
+            req.body.reCommentId
+        );
+        res.send(result);
+    } catch (err) {
+        res.send('대댓글 삭제 실패');
+    }
+};
+
 exports.searchCommunity = async (req, res) => {
     try {
         const regex = new RegExp(req.query.searchWord, 'i');
