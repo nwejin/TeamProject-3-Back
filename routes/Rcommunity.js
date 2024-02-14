@@ -79,4 +79,9 @@ router.get('/search', Ccommunity.searchCommunity);
 router.post('/report', Ccommunity.reportCommunity);
 router.get('/report', Ccommunity.getReportCommunity);
 
+// 댓글 삭제
+router.post('/deleteCommnet', Ccommunity.deleteComment);
+// 대댓글 삭제
+router.post('/deleteReCommnet', Ccommunity.deleteReComment);
+
 module.exports = router;
