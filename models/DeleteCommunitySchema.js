@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const CommunitySchema = new Schema({
+const DeleteCommunitySchema = new Schema({
     // id 연결 (ref는 exports 이름)
     userId: {
         type: Schema.Types.ObjectId,
@@ -46,18 +46,6 @@ const CommunitySchema = new Schema({
             ref: 'User',
         },
     ],
-
-    // // 논리삭제
-    // deleteDate: [
-    //     {
-    //         type: Date.now,
-    //     },
-    // ],
-    // isDelete: [
-    //     {
-    //         type: Boolean,
-    //     },
-    // ],
 });
 
-module.exports = mongoose.model('Community', CommunitySchema);
+module.exports = mongoose.model('DeleteCommunity', DeleteCommunitySchema);
