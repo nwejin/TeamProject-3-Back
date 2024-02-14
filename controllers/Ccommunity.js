@@ -1,6 +1,7 @@
 const CommunitySchema = require('../models/CommunitySchema');
 const CommentSchema = require('../models/CommentSchema');
 const ReCommentSchema = require('../models/ReCommentSchema');
+const DeleteCommunitySchema = require('../models/DeleteCommunitySchema');
 
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -274,8 +275,26 @@ exports.deleteCommunity = async (req, res) => {
         const result = await CommunitySchema.findByIdAndDelete(
             req.body.communityId
         );
+
+        // DeleteCommunitySchema에 저장할 데이터 생성
+        const deleteCommunityData = {
+            userId: result.userId,
+            title: result.title,
+            content: result.content,
+            subject: result.subject,
+            date: result.date,
+            like: result.like,
+            likedUser: result.likedUser,
+            image: result.image,
+            reportedUser: result.reportedUser,
+        };
+
+        // DeleteCommunitySchema에 저장
+        await DeleteCommunitySchema.create(deleteCommunityData);
+
         res.send(result);
     } catch (error) {
+        console.log('del err', error);
         res.send('게시물 삭제 실패');
     }
 };
