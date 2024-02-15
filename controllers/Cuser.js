@@ -75,6 +75,7 @@ exports.userRegister = async (req, res) => {
             user_nickname: req.body.user_nickname,
             user_email: req.body.user_email,
             isKakao: 0,
+            isAdmin: 0,
         });
 
         res.json({ success: true });

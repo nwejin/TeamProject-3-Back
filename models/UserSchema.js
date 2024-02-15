@@ -20,14 +20,18 @@ const UserSchema = new Schema({
         type: String,
     },
 
-    word_bookmark: [{
-        ref: 'WordSchema',
-        type: Object,
-    }],
-    news_bookmark: [{
-        ref: 'News',
-        type: Schema.Types.ObjectId,
-    }],
+    word_bookmark: [
+        {
+            ref: 'WordSchema',
+            type: Object,
+        },
+    ],
+    news_bookmark: [
+        {
+            ref: 'News',
+            type: Schema.Types.ObjectId,
+        },
+    ],
     isKakao: {
         require: true,
         type: Number,
@@ -36,6 +40,11 @@ const UserSchema = new Schema({
     user_profile: {
         type: String,
         default: process.env.DEFAULTIMAGE,
+    },
+    isAdmin: {
+        type: Number,
+        require: true,
+        enum: [0, 1],
     },
 });
 
