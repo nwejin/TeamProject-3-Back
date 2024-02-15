@@ -335,7 +335,8 @@ exports.searchCommunity = async (req, res) => {
             .populate('userId', 'user_nickname user_profile')
             .sort({
                 date: -1,
-            });
+            })
+            .limit(5);
         res.send(searchResult);
     } catch (error) {
         //console.log('게시물 DB 검색 실패', error);
