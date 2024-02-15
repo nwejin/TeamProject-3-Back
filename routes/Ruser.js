@@ -31,8 +31,8 @@ router.get('/admin/communityManage', Cuser.getReportPost);
 router.get('/admin/deleteManage', Cuser.getAllPost);
 
 // 복구
-router.post('/admin/deleteManage/recover');
+router.post('/admin/deleteManage/recover', Cuser.recoverCommunity);
 // 삭제
-router.post('/admin/deleteManage/realDelete');
+router.post('/admin/deleteManage/realDelete', Cuser.realDeleteCommunity);
 
 module.exports = router;

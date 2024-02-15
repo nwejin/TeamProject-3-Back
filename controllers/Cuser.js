@@ -5,6 +5,7 @@ const StockWordSchema = require('../models/StockWordSchema');
 const { tokenCheck } = require('../utils/tokenCheck');
 const CommunitySchema = require('../models/CommunitySchema');
 const DeleteCommunitySchema = require('../models/DeleteCommunitySchema');
+
 require('dotenv').config();
 const jwtSecret = process.env.JWTSECRET;
 const cookieConfig = {
@@ -248,5 +249,49 @@ exports.getAllPost = async (req, res) => {
     } catch (err) {
         console.log(err);
         res.status(500).send('데이터 불러오기 실패');
+    }
+};
+
+// 영구 삭제 (deleteCommunityData)
+exports.realDeleteCommunity = async (req, res) => {
+    try {
+        const _id = req.body.postId;
+        const del = await DeleteCommunitySchema.deleteOne({ _id });
+
+        res.send(del);
+    } catch (err) {
+        console.log(err);
+        res.send(err);
+    }
+};
+
+exports.recoverCommunity = async (req, res) => {
+    try {
+        const _id = req.body.postId;
+        const result = await DeleteCommunitySchema.findByIdAndDelete({ _id });
+
+        console.log('recover find > ', result);
+
+        // CommunitySchema에 저장할 데이터 생성
+        const communityData = {
+            _id: result._id,
+            userId: result.userId,
+            title: result.title,
+            content: result.content,
+            subject: result.subject,
+            date: result.date,
+            like: result.like,
+            likedUser: result.likedUser,
+            image: result.image,
+            reportedUser: [],
+        };
+
+        // DeleteCommunitySchema에 저장
+        await CommunitySchema.create(communityData);
+
+        res.send(communityData);
+    } catch (err) {
+        console.log(err);
+        res.send(err);
     }
 };
