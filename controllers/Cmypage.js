@@ -88,24 +88,72 @@ exports.modifyUserInfo = async (req, res) => {
     const currentUserId = req.body.user_id;
     try {
         console.log('현재 사용자 아이디', currentUserId);
-
-        const hashedPw = bcrypt.hashSync(user_changepw, 10);
-        const modifyUser = await UserSchema.updateOne(
-            {
-                user_id: currentUserId,
-            },
-            {
-                user_email: user_email,
-                user_password: hashedPw,
-                user_nickname: user_nickname,
-                user_profile: user_profile,
-            }
-        );
-        console.log(modifyUser);
-        res.send({
-            success: true,
-            message: '회원정보 DB 수정 완료',
-        });
+        if (user_changepw == '' && user_profile == null) {
+            const modifyUser = await UserSchema.updateOne(
+                {
+                    user_id: currentUserId,
+                },
+                {
+                    user_email: user_email,
+                    user_nickname: user_nickname,
+                }
+            );
+            console.log(modifyUser);
+            res.send({
+                success: true,
+                message: '회원정보 DB 수정 완료',
+            });
+        } else if (user_changepw == '' && user_profile != null) {
+            const modifyUser = await UserSchema.updateOne(
+                {
+                    user_id: currentUserId,
+                },
+                {
+                    user_email: user_email,
+                    user_nickname: user_nickname,
+                    user_profile: user_profile,
+                }
+            );
+            console.log(modifyUser);
+            res.send({
+                success: true,
+                message: '회원정보 DB 수정 완료',
+            });
+        } else if (user_changepw != '' && user_profile == null) {
+            const modifyUser = await UserSchema.updateOne(
+                {
+                    user_id: currentUserId,
+                },
+                {
+                    user_email: user_email,
+                    user_nickname: user_nickname,
+                    user_profile: user_profile,
+                }
+            );
+            console.log(modifyUser);
+            res.send({
+                success: true,
+                message: '회원정보 DB 수정 완료',
+            });
+        } else {
+            const hashedPw = bcrypt.hashSync(user_changepw, 10);
+            const modifyUser = await UserSchema.updateOne(
+                {
+                    user_id: currentUserId,
+                },
+                {
+                    user_email: user_email,
+                    user_password: hashedPw,
+                    user_nickname: user_nickname,
+                    user_profile: user_profile,
+                }
+            );
+            console.log(modifyUser);
+            res.send({
+                success: true,
+                message: '회원정보 DB 수정 완료',
+            });
+        }
     } catch (error) {
         console.log('회원정보 DB 수정 에러');
         res.send({
