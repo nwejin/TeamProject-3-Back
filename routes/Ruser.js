@@ -2,7 +2,6 @@ const Cuser = require('../controllers/Cuser');
 const Cmy = require('../controllers/Cmypage');
 const router = require('express').Router();
 
-
 // 로그인 기능
 router.post('/login', Cuser.userLogin);
 
@@ -28,5 +27,12 @@ router.get('/hi', Cuser.getMypage);
 
 router.get('/admin', Cuser.getAllUser);
 router.get('/admin/communityManage', Cuser.getReportPost);
+
+router.get('/admin/deleteManage', Cuser.getAllPost);
+
+// 복구
+router.post('/admin/deleteManage/recover');
+// 삭제
+router.post('/admin/deleteManage/realDelete');
 
 module.exports = router;

@@ -4,6 +4,7 @@ const UserSchema = require('../models/UserSchema');
 const StockWordSchema = require('../models/StockWordSchema');
 const { tokenCheck } = require('../utils/tokenCheck');
 const CommunitySchema = require('../models/CommunitySchema');
+const DeleteCommunitySchema = require('../models/DeleteCommunitySchema');
 require('dotenv').config();
 const jwtSecret = process.env.JWTSECRET;
 const cookieConfig = {
@@ -233,6 +234,17 @@ exports.getReportPost = async (req, res) => {
             reportedUser: { $exists: true, $not: { $size: 0 } },
         }).populate('userId', 'user_nickname user_profile');
         res.json(reportPost);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('데이터 불러오기 실패');
+    }
+};
+
+exports.getAllPost = async (req, res) => {
+    try {
+        const allPost = await DeleteCommunitySchema.find({});
+        console.log('회원 조회', allPost);
+        res.json(allPost);
     } catch (err) {
         console.log(err);
         res.status(500).send('데이터 불러오기 실패');
