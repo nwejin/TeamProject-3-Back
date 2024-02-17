@@ -1,7 +1,7 @@
 // (네이버)
 
 const cheerio = require('cheerio');
-const iconv = require('iconv-lite');
+// const iconv = require('iconv-lite');
 const axios = require('axios');
 
 // 매개변수 -> 크롤링하고자 하는 웹 페이지의 URL
