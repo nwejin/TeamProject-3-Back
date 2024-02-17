@@ -1,6 +1,6 @@
 // 코인뉴스 크롤링(코인니스)
 const cheerio = require('cheerio');
-const iconv = require('iconv-lite');
+// const iconv = require('iconv-lite');
 const axios = require('axios');
 
 const getOriginNews = async (originUrl) => {
